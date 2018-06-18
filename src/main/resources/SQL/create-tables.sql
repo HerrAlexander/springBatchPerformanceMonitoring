@@ -110,6 +110,7 @@ CREATE TABLE "Item" (
   "TimeInMS" int(11) DEFAULT NULL,
   "Timestamp" BIGINT NOT NULL,
   "ItemName" varchar(1000) NOT NULL,
+  "ItemClassName" varchar(255) NOT NULL,
   "Error" tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY ("ItemID")
 );

@@ -50,12 +50,14 @@ public class SPBMItem {
 
     private final String itemName;
 
+    private final String itemClass;
+    
     private final long timestamp;
     
     private final int error;
     
     public SPBMItem(final int actionID, final int chunkExecutionID, final int timeInMS, final int error,
-            String itemName, long timestamp) {
+            String itemName, String itemClass, long timestamp) {
         super();
         this.actionID = actionID;
         this.chunkExecutionID = chunkExecutionID;
@@ -65,6 +67,7 @@ public class SPBMItem {
         if (itemName.length() >= 300) {
             itemName = itemName.substring(0, 300);
         }
+        this.itemClass = itemClass;
         this.itemName = itemName;
     }
 
@@ -72,6 +75,10 @@ public class SPBMItem {
         return itemName;
     }
 
+    public String getItemClass() {
+        return itemClass;
+    }
+    
     public int getActionID() {
         return actionID;
     }

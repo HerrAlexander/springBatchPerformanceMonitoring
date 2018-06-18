@@ -84,7 +84,7 @@ public class LoggingIterator<T> implements Iterator<T> {
 			final SPBMItem sPBMItem = new SPBMItem(chronoHelper.getActiveActionID(Thread.currentThread()),
 					chronoHelper.getBatchChunkListener().getSPBMChunkExecution(Thread.currentThread())
 							.getChunkExecutionID(),
-					(int) iteratorChronometer.getDuration(), 0, iteratorChronometer.getObjectName(), Instant.now().toEpochMilli());
+					(int) iteratorChronometer.getDuration(), 0, iteratorChronometer.getObjectName(), iteratorChronometer.getObjectClass(), Instant.now().toEpochMilli());
 
 			sPBMItemQueue.addItem(sPBMItem);
 		}
@@ -98,12 +98,13 @@ public class LoggingIterator<T> implements Iterator<T> {
 			final SPBMItem sPBMItem = new SPBMItem(chronoHelper.getActiveActionID(Thread.currentThread()),
 					chronoHelper.getBatchChunkListener().getSPBMChunkExecution(Thread.currentThread())
 							.getChunkExecutionID(),
-					(int) iteratorChronometer.getDuration(), 0, iteratorChronometer.getObjectName(), Instant.now().toEpochMilli());
+					(int) iteratorChronometer.getDuration(), 0, iteratorChronometer.getObjectName(), iteratorChronometer.getObjectClass(), Instant.now().toEpochMilli());
 			sPBMItemQueue.addItem(sPBMItem);
 		}
 		final T next = iterator.next();
 		iteratorChronometer = new Chronometer();
 		iteratorChronometer.setObjectName(next.toString());
+		iteratorChronometer.setObjectClass(next.getClass().getSimpleName());
 		iteratorChronometer.startChronometer();
 		return next;
 	}

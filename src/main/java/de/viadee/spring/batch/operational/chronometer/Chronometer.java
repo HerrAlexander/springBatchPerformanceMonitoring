@@ -49,6 +49,8 @@ public class Chronometer {
      */
     private String objectName;
 
+    private String objectClass;
+    
     private long startTimeMillis, endTimeMillis;
 
     public List<TimeLogger> getChildTimeLogger() {
@@ -88,6 +90,14 @@ public class Chronometer {
 
     public void setObjectName(final String objectName) {
         this.objectName = objectName;
+    }
+    
+    public String getObjectClass() {
+        return objectClass;
+    }
+
+    public void setObjectClass(final String objectClass) {
+        this.objectClass = objectClass;
     }
 
     public long getStartTimeMillis() {

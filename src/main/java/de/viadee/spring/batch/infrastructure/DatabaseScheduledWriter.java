@@ -78,7 +78,7 @@ class DatabaseScheduledWriter implements Runnable {
 
     private ChronoHelper chronoHelper;
 
-    private final String ITEMINSERTSQL = "INSERT INTO \"Item\" (\"ActionID\",\"ChunkExecutionID\",\"ItemName\",\"TimeInMS\",\"Timestamp\", \"Error\") VALUES (:actionID,:chunkExecutionID,:itemName,:timeInMS,:timestamp,:error);";
+    private final String ITEMINSERTSQL = "INSERT INTO \"Item\" (\"ActionID\",\"ChunkExecutionID\",\"ItemName\", \"ItemClassName\", \"TimeInMS\",\"Timestamp\", \"Error\") VALUES (:actionID,:chunkExecutionID,:itemName,:className,:timeInMS,:timestamp,:error);";
 
     private final String CHUNKEXECUTIONINSERTSQL = "INSERT INTO \"ChunkExecution\" (\"ChunkExecutionID\", \"StepID\", \"StepName\", \"Iteration\",\"ChunkTime\") VALUES (:chunkExecutionID,:stepID,:stepName,:iteration,:chunkTime);";
 
@@ -146,6 +146,7 @@ class DatabaseScheduledWriter implements Runnable {
             params.put("actionID", "" + item.getActionID());
             params.put("chunkExecutionID", "" + item.getChunkExecutionID());
             params.put("itemName", "" + item.getItemName());
+            params.put("className", item.getItemClass());
             params.put("timeInMS", "" + item.getTimeInMS());
             params.put("timestamp", "" + item.getTimestamp());
             params.put("error", "" + item.isError());

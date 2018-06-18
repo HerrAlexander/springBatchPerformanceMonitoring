@@ -87,7 +87,7 @@ public class ItemReadAspectListener {
 			final SPBMItem sPBMItem = new SPBMItem(
 					chronoHelper.getActiveActionID(Thread.currentThread()), chronoHelper.getBatchChunkListener()
 							.getSPBMChunkExecution(Thread.currentThread()).getChunkExecutionID(),
-					(int) itemChronometer.getDuration(), 0, readItem.toString(), Instant.now().toEpochMilli());
+					(int) itemChronometer.getDuration(), 0, readItem.toString(), readItem.getClass().getSimpleName(), Instant.now().toEpochMilli());
 			sPBMItemQueue.addItem(sPBMItem);
 
 		}
