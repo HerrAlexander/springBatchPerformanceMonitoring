@@ -28,8 +28,6 @@
  */
 package de.viadee.spring.batch.operational.monitoring;
 
-import java.time.Instant;
-
 import org.apache.log4j.Logger;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -84,7 +82,7 @@ public class ItemProcessAspectListener<I> {
 			final SPBMItem sPBMItem = new SPBMItem(
 					chronoHelper.getActiveActionID(Thread.currentThread()), chronoHelper.getBatchChunkListener()
 							.getSPBMChunkExecution(Thread.currentThread()).getChunkExecutionID(),
-					(int) chronometer.getDuration(), 0, item.toString(), item.getClass().getSimpleName(), Instant.now().toEpochMilli());
+					(int) chronometer.getDuration(), 0, item.toString(), item.getClass().getSimpleName());
 			sPBMItemQueue.addItem(sPBMItem);
 		}
 		LOGGER.trace("ItemProcessor Around advice proceeded and has stopped its Chronometer");

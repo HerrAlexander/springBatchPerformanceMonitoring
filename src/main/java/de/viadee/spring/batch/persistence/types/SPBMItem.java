@@ -28,6 +28,8 @@
  */
 package de.viadee.spring.batch.persistence.types;
 
+import java.time.Instant;
+
 /**
  * This is the Database representation of an Item-Based Performance-Measurement. It stores the information, how long an
  * item has been active in a particular action (Read / Process / Write).
@@ -57,12 +59,12 @@ public class SPBMItem {
     private final int error;
     
     public SPBMItem(final int actionID, final int chunkExecutionID, final int timeInMS, final int error,
-            String itemName, String itemClass, long timestamp) {
+            String itemName, String itemClass) {
         super();
         this.actionID = actionID;
         this.chunkExecutionID = chunkExecutionID;
         this.timeInMS = timeInMS;
-        this.timestamp = timestamp;
+        this.timestamp = Instant.now().toEpochMilli();
         this.error = error;
         if (itemName.length() >= 300) {
             itemName = itemName.substring(0, 300);
