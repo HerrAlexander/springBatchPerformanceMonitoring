@@ -108,6 +108,7 @@ CREATE TABLE "Item" (
   "ActionID" int(11) NOT NULL,
   "ChunkExecutionID" int(11) NOT NULL,
   "TimeInMS" int(11) DEFAULT NULL,
+  "Timestamp" BIGINT NOT NULL,
   "ItemName" varchar(1000) NOT NULL,
   "Error" tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY ("ItemID")
@@ -118,7 +119,7 @@ CREATE TABLE "Item" (
 
 -- Denormalized table for copying Data to another Tool
 CREATE VIEW "Denormalized" AS (
-SELECT "Job"."JobName", "Step"."StepName", "Step"."StepTime", "ChunkExecution"."Iteration", "Action"."ActionName", "Action"."ActionType", "Item"."ItemName", "Item"."TimeInMS" FROM "Item"
+SELECT "Job"."JobName", "Step"."StepName", "Step"."StepTime", "ChunkExecution"."Iteration", "Action"."ActionName", "Action"."ActionType", "Item"."ItemName", "Item"."Timestamp", "Item"."TimeInMS" FROM "Item"
 JOIN "Action" ON "Action"."ActionID" = "Item"."ActionID"
 JOIN "ChunkExecution" ON "ChunkExecution"."ChunkExecutionID" = "Item"."ChunkExecutionID"
 JOIN "Step" ON "Step"."StepID" = "ChunkExecution"."StepID"

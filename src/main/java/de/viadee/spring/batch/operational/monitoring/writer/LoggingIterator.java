@@ -28,6 +28,7 @@
  */
 package de.viadee.spring.batch.operational.monitoring.writer;
 
+import java.time.Instant;
 import java.util.Iterator;
 
 import org.apache.log4j.Logger;
@@ -83,7 +84,7 @@ public class LoggingIterator<T> implements Iterator<T> {
 			final SPBMItem sPBMItem = new SPBMItem(chronoHelper.getActiveActionID(Thread.currentThread()),
 					chronoHelper.getBatchChunkListener().getSPBMChunkExecution(Thread.currentThread())
 							.getChunkExecutionID(),
-					(int) iteratorChronometer.getDuration(), 0, iteratorChronometer.getObjectName());
+					(int) iteratorChronometer.getDuration(), 0, iteratorChronometer.getObjectName(), Instant.now().toEpochMilli());
 
 			sPBMItemQueue.addItem(sPBMItem);
 		}
@@ -97,7 +98,7 @@ public class LoggingIterator<T> implements Iterator<T> {
 			final SPBMItem sPBMItem = new SPBMItem(chronoHelper.getActiveActionID(Thread.currentThread()),
 					chronoHelper.getBatchChunkListener().getSPBMChunkExecution(Thread.currentThread())
 							.getChunkExecutionID(),
-					(int) iteratorChronometer.getDuration(), 0, iteratorChronometer.getObjectName());
+					(int) iteratorChronometer.getDuration(), 0, iteratorChronometer.getObjectName(), Instant.now().toEpochMilli());
 			sPBMItemQueue.addItem(sPBMItem);
 		}
 		final T next = iterator.next();

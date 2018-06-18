@@ -28,6 +28,8 @@
  */
 package de.viadee.spring.batch.operational.monitoring;
 
+import java.time.Instant;
+
 import org.apache.log4j.Logger;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -81,10 +83,11 @@ public class ItemReadAspectListener {
 		itemChronometer.stop();
 		// Name the Chrono
 		if (!(readItem == null)) {
+			
 			final SPBMItem sPBMItem = new SPBMItem(
 					chronoHelper.getActiveActionID(Thread.currentThread()), chronoHelper.getBatchChunkListener()
 							.getSPBMChunkExecution(Thread.currentThread()).getChunkExecutionID(),
-					(int) itemChronometer.getDuration(), 0, readItem.toString());
+					(int) itemChronometer.getDuration(), 0, readItem.toString(), Instant.now().toEpochMilli());
 			sPBMItemQueue.addItem(sPBMItem);
 
 		}
