@@ -120,7 +120,7 @@ CREATE TABLE "Item" (
 
 -- Denormalized table for copying Data to another Tool
 CREATE VIEW "Denormalized" AS (
-SELECT "Job"."JobName", "Step"."StepName", "Step"."StepTime", "ChunkExecution"."Iteration", "Action"."ActionName", "Action"."ActionType", "Item"."ItemName", "Item"."Timestamp", "Item"."TimeInMS" FROM "Item"
+SELECT "Job"."JobName", "Step"."StepName", "Step"."StepTime", "ChunkExecution"."Iteration", "Action"."ActionName", "Action"."ActionType", "Item"."ItemName", "Item"."ItemClassName", "Item"."Timestamp", "Item"."TimeInMS" FROM "Item"
 JOIN "Action" ON "Action"."ActionID" = "Item"."ActionID"
 JOIN "ChunkExecution" ON "ChunkExecution"."ChunkExecutionID" = "Item"."ChunkExecutionID"
 JOIN "Step" ON "Step"."StepID" = "ChunkExecution"."StepID"
