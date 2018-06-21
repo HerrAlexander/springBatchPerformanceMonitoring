@@ -34,31 +34,51 @@ package de.viadee.spring.batch.persistence.types;
  */
 public class SPBMJob {
 
-    private final int jobID;
+	private final int jobID;
 
-    private final String jobName;
+	private final String jobName;
 
-    private int duration;
+	private int duration;
 
-    public SPBMJob(final int jobID, final String jobName, final int Duration) {
-        this.jobID = jobID;
-        this.jobName = jobName;
-    }
+	private long jobStart;
 
-    public int getJobID() {
-        return this.jobID;
-    }
+	private long jobEnd;
 
-    public String getJobName() {
-        return this.jobName;
-    }
+	public SPBMJob(final int jobID, final String jobName, final int Duration) {
+		this.jobID = jobID;
+		this.jobName = jobName;
+	}
 
-    public void setDuration(final int duration) {
-        this.duration = duration;
-    }
+	public int getJobID() {
+		return this.jobID;
+	}
 
-    public int getDuration() {
-        return this.duration;
-    }
+	public String getJobName() {
+		return this.jobName;
+	}
+
+	public void setDuration(final int duration) {
+		this.duration = duration;
+	}
+
+	public int getDuration() {
+		return this.duration;
+	}
+
+	public long getJobStart() {
+		return jobStart;
+	}
+
+	public void setJobStart(long jobStart) {
+		this.jobStart = jobStart;
+	}
+
+	public long getJobEnd() {
+		return jobEnd;
+	}
+
+	public void setJobEnd(long jobEnd) {
+		this.jobEnd = jobEnd;
+	}
 
 }

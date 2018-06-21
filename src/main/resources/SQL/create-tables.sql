@@ -7,9 +7,8 @@ SET LOG 0;
 -- Disable UndoLog to get a bit more Speedup
 SET UNDO_LOG 0;
 
--- Clean the whole DB
+-- Clean the whole DB (Except BatchRuns)
 DROP ALL OBJECTS;
-
 
 -- Create Table for the plain LOG
 CREATE TABLE "LOGS"
@@ -25,11 +24,6 @@ CREATE TABLE "TestTable"
 );
 
 -- Create Tables for Logback DbAppender
-
-DROP TABLE logging_event_exception IF EXISTS;
-DROP TABLE logging_event_property IF EXISTS;
-DROP TABLE logging_event IF EXISTS;
-
 CREATE TABLE logging_event (
   timestmp BIGINT NOT NULL,
   formatted_message LONGVARCHAR NOT NULL,
@@ -66,6 +60,8 @@ CREATE TABLE logging_event_exception (
 CREATE TABLE "Job" (
   "JobID" int(11) NOT NULL,
   "JobName" varchar(255) NOT NULL,
+  "JobStart" BIGINT NOT NULL,
+  "JobEnd" BIGINT NOT NULL,
   "Duration" int(11) NOT NULL,
   "JobID2" int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY ("JobID", "JobID2")
@@ -171,7 +167,7 @@ ORDER BY "TotalTime" DESC;
 
 -- Show Reader / Processor / Writer Tiems for each step which has an item based processing (Won't show tasklets)
 CREATE VIEW "Overview" AS 
-SELECT "Job"."JobID", "Step"."StepID", "Action"."ActionType", "Job"."JobName" AS "Job", "Step"."StepName" AS "Step", "Action"."ActionName" AS "Action", sum("Item"."TimeInMS" ) as "Total" from "Job" 
+SELECT "Job"."JobID", "Step"."StepID", "Action"."ActionType", "Job"."JobName" AS "Job", "Job"."JobStart" AS "JobStart", "Job"."JobEnd" AS "JobEnd", "Step"."StepName" AS "Step", "Action"."ActionName" AS "Action", sum("Item"."TimeInMS" ) as "Total", count("Item"."ItemID" ) as "ProcessedItems" from "Job" 
 INNER JOIN "Step" ON "Step"."JobID" = "Job"."JobID"
 INNER JOIN "ChunkExecution" ON "ChunkExecution"."StepID" = "Step"."StepID"
 INNER JOIN "Item" ON "Item"."ChunkExecutionID" = "ChunkExecution"."ChunkExecutionID"

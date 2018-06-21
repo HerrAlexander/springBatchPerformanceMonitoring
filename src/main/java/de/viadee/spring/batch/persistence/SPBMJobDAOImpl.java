@@ -45,18 +45,20 @@ import de.viadee.spring.batch.persistence.types.SPBMJob;
 @Repository
 public class SPBMJobDAOImpl implements SPBMJobDAO {
 
-    @Autowired
-    private JdbcTemplateHolder jdbcTemplateHolder;
+	@Autowired
+	private JdbcTemplateHolder jdbcTemplateHolder;
 
-    private final String INSERTSQL = "INSERT INTO \"Job\" (\"JobID\",\"JobName\", \"Duration\") VALUES (:jobID,:jobName,:duration);";
+	private final String INSERTSQL = "INSERT INTO \"Job\" (\"JobID\",\"JobName\",\"JobStart\",\"JobEnd\",\"Duration\") VALUES (:jobID,:jobName,:jobStart,:jobEnd,:duration);";
 
-    @Override
-    public void insert(final SPBMJob job) {
-        final Map<String, String> params = new HashMap<String, String>();
-        params.put("jobID", "" + job.getJobID());
-        params.put("jobName", job.getJobName());
-        params.put("duration", "" + job.getDuration());
-        jdbcTemplateHolder.getJdbcTemplate().update(INSERTSQL, params);
-    }
+	@Override
+	public void insert(final SPBMJob job) {
+		final Map<String, String> params = new HashMap<String, String>();
+		params.put("jobID", "" + job.getJobID());
+		params.put("jobName", job.getJobName());
+		params.put("jobStart", String.valueOf(job.getJobStart()));
+		params.put("jobEnd", String.valueOf(job.getJobEnd()));
+		params.put("duration", "" + job.getDuration());
+		jdbcTemplateHolder.getJdbcTemplate().update(INSERTSQL, params);
+	}
 
 }

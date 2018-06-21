@@ -28,6 +28,8 @@
  */
 package de.viadee.spring.batch.operational.monitoring;
 
+import java.time.Instant;
+
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
@@ -105,6 +107,7 @@ public class BatchJobListener implements JobExecutionListener {
         LOGGER.trace("BatchJobListener before advice active");
         final String jobName = jobExecution.getJobInstance().getJobName();
         setStaticBatchJobListener();
+        this.sPBMJob.setJobStart(Instant.now().toEpochMilli());
         timeLogger.setName(jobName);
         notificationHolder.beforeJob();
         timeLogger.getOwnChronometer().startChronometer();
@@ -118,6 +121,7 @@ public class BatchJobListener implements JobExecutionListener {
         timeLogger.getOwnChronometer().stop();
         LOGGER.trace("BatchJobListener after method has stopped its chronometers");
         this.sPBMJob.setDuration((int) timeLogger.getOwnChronometer().getDuration());
+        this.sPBMJob.setJobEnd(Instant.now().toEpochMilli());
         this.insertDAO();
         notificationHolder.afterJob();
         try {
