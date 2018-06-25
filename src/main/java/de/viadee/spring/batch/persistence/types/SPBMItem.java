@@ -66,8 +66,8 @@ public class SPBMItem {
         this.timeInMS = timeInMS;
         this.timestamp = Instant.now().toEpochMilli();
         this.error = error;
-        if (itemName.length() >= 300) {
-            itemName = itemName.substring(0, 300);
+        if (itemName.length() >= 1000) {
+            itemName = itemName.substring(0, 1000);
         }
         this.itemClass = itemClass;
         this.itemName = itemName;
