@@ -7,8 +7,27 @@ SET LOG 0;
 -- Disable UndoLog to get a bit more Speedup
 SET UNDO_LOG 0;
 
+CREATE TABLE IF NOT EXISTS "BatchRuns" (
+  "ProcessID" int(11) NOT NULL AUTO_INCREMENT,
+  "ProcessedItems" int(11) NOT NULL,
+  "Total" int(11) NOT NULL,
+  "TimeInMSMean" int(11) NOT NULL,
+  "StepStart" BIGINT NOT NULL,
+  "StepEnd" BIGINT NOT NULL,
+  PRIMARY KEY ("ProcessID")
+);
+
 -- Clean the whole DB (Except BatchRuns)
-DROP ALL OBJECTS;
+-- DROP ALL OBJECTS;
+DROP VIEW "ActionTotalTime" IF EXISTS;
+DROP VIEW "ChunkExecutionByTime" IF EXISTS;
+DROP VIEW "Denormalized" IF EXISTS;
+DROP VIEW "ItemDuration" IF EXISTS;
+DROP VIEW "LongestActionPerChunkExecution" IF EXISTS;
+DROP VIEW "MeanItemTimeByProcessor" IF EXISTS;
+DROP VIEW "Overview" IF EXISTS;
+
+DROP TABLE "LOGS", "TestTable", "Job", "Step", "ChunkExecution", "Action", "StepAction", "Item", "logging_event", "logging_event_property", "logging_event_exception" IF EXISTS;
 
 -- Create Table for the plain LOG
 CREATE TABLE "LOGS"
@@ -24,7 +43,7 @@ CREATE TABLE "TestTable"
 );
 
 -- Create Tables for Logback DbAppender
-CREATE TABLE logging_event (
+CREATE TABLE "logging_event" (
   timestmp BIGINT NOT NULL,
   formatted_message LONGVARCHAR NOT NULL,
   logger_name VARCHAR(256) NOT NULL,
@@ -42,14 +61,14 @@ CREATE TABLE logging_event (
   event_id IDENTITY NOT NULL);
 
 
-CREATE TABLE logging_event_property (
+CREATE TABLE "logging_event_property" (
   event_id BIGINT NOT NULL,
   mapped_key  VARCHAR(254) NOT NULL,
   mapped_value LONGVARCHAR,
   PRIMARY KEY(event_id, mapped_key),
   FOREIGN KEY (event_id) REFERENCES logging_event(event_id));
 
-CREATE TABLE logging_event_exception (
+CREATE TABLE "logging_event_exception" (
   event_id BIGINT NOT NULL,
   i SMALLINT NOT NULL,
   trace_line VARCHAR(256) NOT NULL,

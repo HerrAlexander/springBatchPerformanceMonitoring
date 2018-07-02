@@ -52,70 +52,78 @@ import de.viadee.spring.batch.persistence.SPBMItemQueue;
 
 /**
  * 
- * Main Configuration class of the Monitoring Tool. This class sets up the Environment which the Monitoring Tool needs
- * to be operational. This includes: Package based Component scanning (excluding the SetupVerification package),
+ * Main Configuration class of the Monitoring Tool. This class sets up the
+ * Environment which the Monitoring Tool needs to be operational. This includes:
+ * Package based Component scanning (excluding the SetupVerification package),
  * enabling AspectJAutoProxy, creating necessary Beans for DB Access...
  * 
  */
 @Configuration
 @ComponentScan(excludeFilters = @Filter(type = FilterType.ASSIGNABLE_TYPE, value = { ContainerTest.class,
-        AspectTestClass.class, TestAspect.class }), basePackages = { "de.viadee.spring.batch" })
+		AspectTestClass.class, TestAspect.class }), basePackages = { "de.viadee.spring.batch" })
 @EnableTransactionManagement
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public class Configurator {
 
-    @Autowired
-    private SPBMItemQueue spbmItemQueue;
+	@Autowired
+	private SPBMItemQueue spbmItemQueue;
 
-    @Autowired
-    private SPBMChunkExecutionQueue spbmChunkExecutionQueue;
+	@Autowired
+	private SPBMChunkExecutionQueue spbmChunkExecutionQueue;
 
-    @Autowired
-    private ChronoHelper chronoHelper;
+	@Autowired
+	private ChronoHelper chronoHelper;
 
-    @Bean
-    public JdbcTemplateHolder getJdbcTemplateHolder() throws SQLException {
-        final JdbcTemplateHolder jdbcTemplateHolder = new JdbcTemplateHolder();
-        jdbcTemplateHolder.setDataSourceHolder(getDataSourceHolder());
-        jdbcTemplateHolder.setNamedParameterJdbcTemplate();
-        jdbcTemplateHolder.setChronoHelper(chronoHelper);
-        return jdbcTemplateHolder;
-    }
 
-    @Bean
-    public SchedulingHolder schedulingHolder() throws SQLException, IllegalStateException, InterruptedException {
-        final SchedulingHolder schedulingHolder = new SchedulingHolder(spbmItemQueue, spbmChunkExecutionQueue,
-                getJdbcTemplateHolder(), chronoHelper);
-        return schedulingHolder;
-    }
+	@Bean
+	public JdbcTemplateHolder getJdbcTemplateHolder() throws SQLException {
+		final JdbcTemplateHolder jdbcTemplateHolder = new JdbcTemplateHolder();
+		jdbcTemplateHolder.setDataSourceHolder(getDataSourceHolder());
+		jdbcTemplateHolder.setNamedParameterJdbcTemplate();
+		jdbcTemplateHolder.setChronoHelper(chronoHelper);
+		return jdbcTemplateHolder;
+	}
 
-    @Bean
-    public JobEndQueueCleaner jobEndQueueCleaner() throws SQLException {
-        final JobEndQueueCleaner jobEndQueueCleaner = new JobEndQueueCleaner(spbmItemQueue, spbmChunkExecutionQueue,
-                getJdbcTemplateHolder());
-        return jobEndQueueCleaner;
-    }
+	@Bean
+	public SchedulingHolder schedulingHolder() throws SQLException, IllegalStateException, InterruptedException {
+		final SchedulingHolder schedulingHolder = new SchedulingHolder(spbmItemQueue, spbmChunkExecutionQueue,
+				getJdbcTemplateHolder(), chronoHelper);
+		return schedulingHolder;
+	}
 
-    private static final Logger LOGGER = LoggingWrapper.getLogger(Configurator.class);
+	@Bean
+	public JobEndQueueCleaner jobEndQueueCleaner() throws SQLException {
+		final JobEndQueueCleaner jobEndQueueCleaner = new JobEndQueueCleaner(spbmItemQueue, spbmChunkExecutionQueue,
+				getJdbcTemplateHolder());
+		return jobEndQueueCleaner;
+	}
 
-    /**
-     * Note: You MUST see this message. Otherwise the In-Memory-Monitoring-DB may be killed before completely syncing
-     * with the File-Based one (which leads to Loss of monitoring data).
-     */
-    @PreDestroy
-    public void stopNotifier() {
-        LOGGER.info("Spring Batch Monitoring Tool has sucsessfully been unloaded.");
-    }
+	private static final Logger LOGGER = LoggingWrapper.getLogger(Configurator.class);
 
-    @PostConstruct
-    public void notifyInitializaion() {
-        LOGGER.info("Spring batch Monitoring Tool has been successfully loaded.");
+	/**
+	 * Note: You MUST see this message. Otherwise the In-Memory-Monitoring-DB may be
+	 * killed before completely syncing with the File-Based one (which leads to Loss
+	 * of monitoring data).
+	 */
+	@PreDestroy
+	public void stopNotifier() {
+		LOGGER.info("Spring Batch Monitoring Tool has sucsessfully been unloaded.");
+	}
 
-    }
+	@PostConstruct
+	public void notifyInitializaion() {
+		LOGGER.info("Spring batch Monitoring Tool has been successfully loaded.");
+	}
 
-    @Bean
-    public DataSourceHolder getDataSourceHolder() {
-        return new DataSourceHolder();
-    }
+	// TODO: As Singleton Bean?
+	@Bean
+	public SBPMConfiguration getConfig() {
+		return new SBPMConfiguration();
+	}
+	
+	@Bean
+	public DataSourceHolder getDataSourceHolder() {
+		return new DataSourceHolder(getConfig());
+	}
 
 }
