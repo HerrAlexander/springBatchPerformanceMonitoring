@@ -35,40 +35,60 @@ package de.viadee.spring.batch.persistence.types;
  */
 public class SPBMStep {
 
-    private final int stepID;
+	private final int stepID;
 
-    private final int jobID;
+	private final int jobID;
 
-    private final String stepName;
+	private final String stepName;
 
-    private int stepTime;
+	private int stepTime;
 
-    public SPBMStep(final int stepID, final int jobID, final String stepName, final int stepTime) {
-        super();
-        this.stepID = stepID;
-        this.jobID = jobID;
-        this.stepName = stepName;
-        this.stepTime = stepTime;
-    }
+	private long stepStart;
 
-    public int getStepID() {
-        return stepID;
-    }
+	private long stepEnd;
 
-    public int getJobID() {
-        return jobID;
-    }
+	public SPBMStep(final int stepID, final int jobID, final String stepName, final int stepTime) {
+		super();
+		this.stepID = stepID;
+		this.jobID = jobID;
+		this.stepName = stepName;
+		this.stepTime = stepTime;
+	}
 
-    public String getStepName() {
-        return stepName;
-    }
+	public int getStepID() {
+		return stepID;
+	}
 
-    public int getStepTime() {
-        return stepTime;
-    }
+	public int getJobID() {
+		return jobID;
+	}
 
-    public void setStepTime(final int stepTime) {
-        this.stepTime = stepTime;
-    }
+	public String getStepName() {
+		return stepName;
+	}
+
+	public int getStepTime() {
+		return stepTime;
+	}
+
+	public void setStepTime(final int stepTime) {
+		this.stepTime = stepTime;
+	}
+
+	public long getStepStart() {
+		return stepStart;
+	}
+
+	public void setStepStart(long stepStart) {
+		this.stepStart = stepStart;
+	}
+
+	public long getStepEnd() {
+		return stepEnd;
+	}
+
+	public void setStepEnd(long stepEnd) {
+		this.stepEnd = stepEnd;
+	}
 
 }

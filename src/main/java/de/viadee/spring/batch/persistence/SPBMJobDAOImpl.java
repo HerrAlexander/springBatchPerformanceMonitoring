@@ -35,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import de.viadee.spring.batch.infrastructure.JdbcTemplateHolder;
+import de.viadee.spring.batch.infrastructure.SBPMConfiguration;
 import de.viadee.spring.batch.persistence.types.SPBMJob;
 
 /**
@@ -48,8 +49,13 @@ public class SPBMJobDAOImpl implements SPBMJobDAO {
 	@Autowired
 	private JdbcTemplateHolder jdbcTemplateHolder;
 
+	@Autowired
+	private SBPMConfiguration sbpmConfig;
+
 	private final String INSERTSQL = "INSERT INTO \"Job\" (\"JobID\",\"JobName\",\"JobStart\",\"JobEnd\",\"Duration\") VALUES (:jobID,:jobName,:jobStart,:jobEnd,:duration);";
 
+	private final String INSERTMETASQL = "INSERT INTO \"BatchRuns\"(\"JobID\", \"StepID\", \"ActionType\", \"JobName\", \"StepName\", \"StepStart\", \"StepEnd\", \"ActionName\",  \"TotalTime\", \"ProcessedItems\", \"MeanTimePerItem\") SELECT  \"OV\".*,  (\"OV\".\"Total\"/ \"OV\".\"ProcessedItems\") AS \"MeanTimePerItem\" FROM \"Overview\" AS \"OV\";";
+	
 	@Override
 	public void insert(final SPBMJob job) {
 		final Map<String, String> params = new HashMap<String, String>();
@@ -59,6 +65,17 @@ public class SPBMJobDAOImpl implements SPBMJobDAO {
 		params.put("jobEnd", String.valueOf(job.getJobEnd()));
 		params.put("duration", "" + job.getDuration());
 		jdbcTemplateHolder.getJdbcTemplate().update(INSERTSQL, params);
+
+		if (sbpmConfig.isTrackanomaly()) {
+			insertMeta(job);
+		}
+	}
+
+	@Override
+	public void insertMeta(final SPBMJob job) {
+		final Map<String, String> params = new HashMap<String, String>();
+		params.put("jobID", "" + job.getJobID());
+		jdbcTemplateHolder.getJdbcTemplate().update(INSERTMETASQL, params);
 	}
 
 }

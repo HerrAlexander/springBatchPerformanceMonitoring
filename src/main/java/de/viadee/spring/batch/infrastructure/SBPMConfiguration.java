@@ -72,12 +72,11 @@ public class SBPMConfiguration {
 			LOG.warn(e1);
 		}
 
-		// Override with user confog properties
+		// Override with user config properties
 		try {
 			final Resource resource = new ClassPathResource("SpringBatchMonitoring.properties");
 			input = resource.getInputStream();
 			setConfigProperties(input);
-
 		} catch (final NullPointerException e) {
 			LOG.warn(
 					"SpringBatchMonitoring.properties file not found. Falling back to default values (file inside JAR)!");
@@ -95,20 +94,11 @@ public class SBPMConfiguration {
 		final Properties properties = new Properties();
 		properties.load(input);
 
-		String propUser = properties.getProperty("db.username");
-		username = propUser.isEmpty() ? username : propUser;
-
-		String propPassw = properties.getProperty("db.password");
-		password = propPassw.isEmpty() ? password : propPassw;
-
-		String propDriver = properties.getProperty("db.driver");
-		driver = propDriver.isEmpty() ? driver : propDriver;
-
-		String propUrl = properties.getProperty("db.url");
-		url = propUrl.isEmpty() ? url : propUrl;
-
-		boolean propAnomaly = Boolean.parseBoolean(properties.getProperty("db.anomalydetection"));
-		trackanomaly = propAnomaly ? trackanomaly : propAnomaly;
+		username = properties.getProperty("db.username", username);
+		password = properties.getProperty("db.password", password);
+		driver = properties.getProperty("db.driver", driver);
+		url = properties.getProperty("db.url", url);
+		trackanomaly = Boolean.parseBoolean(properties.getProperty("db.anomalydetection", String.valueOf(trackanomaly)));
 
 	}
 }

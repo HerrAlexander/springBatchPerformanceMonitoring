@@ -38,4 +38,6 @@ import de.viadee.spring.batch.persistence.types.SPBMJob;
 public interface SPBMJobDAO {
 
     public void insert(SPBMJob job);
+
+    public void insertMeta(SPBMJob job);
 }

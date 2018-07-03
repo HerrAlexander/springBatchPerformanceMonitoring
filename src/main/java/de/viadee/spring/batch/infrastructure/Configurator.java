@@ -74,7 +74,6 @@ public class Configurator {
 	@Autowired
 	private ChronoHelper chronoHelper;
 
-
 	@Bean
 	public JdbcTemplateHolder getJdbcTemplateHolder() throws SQLException {
 		final JdbcTemplateHolder jdbcTemplateHolder = new JdbcTemplateHolder();
@@ -120,7 +119,7 @@ public class Configurator {
 	public SBPMConfiguration getConfig() {
 		return new SBPMConfiguration();
 	}
-	
+
 	@Bean
 	public DataSourceHolder getDataSourceHolder() {
 		return new DataSourceHolder(getConfig());

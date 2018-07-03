@@ -48,7 +48,7 @@ public class SPBMStepDAOImpl implements SPBMStepDAO {
     @Autowired
     private JdbcTemplateHolder jdbcTemplateHolder;
 
-    private final String INSERTSQL = "INSERT INTO \"Step\" (\"StepID\",\"JobID\",\"StepName\",\"StepTime\") VALUES (:stepID, :jobID, :stepName, :stepTime);";
+    private final String INSERTSQL = "INSERT INTO \"Step\" (\"StepID\",\"JobID\",\"StepName\",\"StepStart\",\"StepEnd\",\"StepTime\") VALUES (:stepID, :jobID, :stepName, :stepStart, :stepEnd, :stepTime);";
 
     @Override
     public void insert(final SPBMStep sPBMStep) {
@@ -56,6 +56,8 @@ public class SPBMStepDAOImpl implements SPBMStepDAO {
         params.put("stepID", "" + sPBMStep.getStepID());
         params.put("jobID", "" + sPBMStep.getJobID());
         params.put("stepName", sPBMStep.getStepName());
+		params.put("stepStart", String.valueOf(sPBMStep.getStepStart()));
+		params.put("stepEnd", String.valueOf(sPBMStep.getStepEnd()));
         params.put("stepTime", "" + sPBMStep.getStepTime());
         jdbcTemplateHolder.getJdbcTemplate().update(INSERTSQL, params);
     }

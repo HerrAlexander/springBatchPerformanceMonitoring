@@ -9,11 +9,17 @@ SET UNDO_LOG 0;
 
 CREATE TABLE IF NOT EXISTS "BatchRuns" (
   "ProcessID" int(11) NOT NULL AUTO_INCREMENT,
-  "ProcessedItems" int(11) NOT NULL,
-  "Total" int(11) NOT NULL,
-  "TimeInMSMean" int(11) NOT NULL,
+  "JobID" int(11) NOT NULL,
+  "StepID" int(11) NOT NULL,
+  "ActionType" int(11) NOT NULL,
+  "JobName" varchar(255) NOT NULL,
+  "StepName" varchar(255) NOT NULL,
   "StepStart" BIGINT NOT NULL,
   "StepEnd" BIGINT NOT NULL,
+  "ActionName" varchar(255) NOT NULL,
+  "TotalTime" int(11) NOT NULL,
+  "ProcessedItems" int(11) NOT NULL,
+  "MeanTimePerItem" int(11) NOT NULL,
   PRIMARY KEY ("ProcessID")
 );
 
@@ -66,14 +72,14 @@ CREATE TABLE "logging_event_property" (
   mapped_key  VARCHAR(254) NOT NULL,
   mapped_value LONGVARCHAR,
   PRIMARY KEY(event_id, mapped_key),
-  FOREIGN KEY (event_id) REFERENCES logging_event(event_id));
+  FOREIGN KEY (event_id) REFERENCES "logging_event"(event_id));
 
 CREATE TABLE "logging_event_exception" (
   event_id BIGINT NOT NULL,
   i SMALLINT NOT NULL,
   trace_line VARCHAR(256) NOT NULL,
   PRIMARY KEY(event_id, i),
-  FOREIGN KEY (event_id) REFERENCES logging_event(event_id));
+  FOREIGN KEY (event_id) REFERENCES "logging_event"(event_id));
   
 -- Create Tables for persisting the logged Information
 CREATE TABLE "Job" (
@@ -90,6 +96,8 @@ CREATE TABLE "Step" (
   "StepID" int(11) NOT NULL AUTO_INCREMENT,
   "JobID" int(11) NOT NULL,
   "StepName" varchar(255) NOT NULL,
+  "StepStart" BIGINT NOT NULL,
+  "StepEnd" BIGINT NOT NULL,
   "StepTime" int(11) NOT NULL,
   "StepID2" int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY ("StepID", "StepName", "StepID2")
@@ -186,12 +194,11 @@ ORDER BY "TotalTime" DESC;
 
 -- Show Reader / Processor / Writer Tiems for each step which has an item based processing (Won't show tasklets)
 CREATE VIEW "Overview" AS 
-SELECT "Job"."JobID", "Step"."StepID", "Action"."ActionType", "Job"."JobName" AS "Job", "Job"."JobStart" AS "JobStart", "Job"."JobEnd" AS "JobEnd", "Step"."StepName" AS "Step", "Action"."ActionName" AS "Action", sum("Item"."TimeInMS" ) as "Total", count("Item"."ItemID" ) as "ProcessedItems" from "Job" 
+SELECT "Job"."JobID", "Step"."StepID", "Action"."ActionType", "Job"."JobName" AS "Job", "Step"."StepName" AS "Step", "Step"."StepStart" AS "StepStart", "Step"."StepEnd" AS "StepEnd", "Action"."ActionName" AS "Action", sum("Item"."TimeInMS" ) as "Total", count("Item"."ItemID" ) as "ProcessedItems" from "Job" 
 INNER JOIN "Step" ON "Step"."JobID" = "Job"."JobID"
 INNER JOIN "ChunkExecution" ON "ChunkExecution"."StepID" = "Step"."StepID"
 INNER JOIN "Item" ON "Item"."ChunkExecutionID" = "ChunkExecution"."ChunkExecutionID"
 INNER JOIN "Action" ON "Action"."ActionID" = "Item"."ActionID"
 GROUP BY "Step"."StepID", "Action"."ActionType", "Action"."ActionID"
-ORDER BY "JobID","StepID","ActionType"
-;
+ORDER BY "JobID","StepID","ActionType";
 

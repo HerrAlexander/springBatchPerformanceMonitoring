@@ -28,6 +28,7 @@
  */
 package de.viadee.spring.batch.operational.monitoring;
 
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -87,6 +88,7 @@ public class BatchStepListener implements StepExecutionListener {
         final String stepName = stepExecution.getStepName();
         sPBMStep = new SPBMStep(chronoHelper.getNextBatchStepID(),
                 chronoHelper.getBatchJobListener().getSPBMJob().getJobID(), stepName, 0);
+        sPBMStep.setStepStart(Instant.now().toEpochMilli());
         final TimeLogger tempLogger = new TimeLogger();
         tempLogger.setName(stepName);
         tempLogger.getOwnChronometer().setObjectName(stepName);
@@ -112,6 +114,7 @@ public class BatchStepListener implements StepExecutionListener {
         for (final Entry<SPBMStep, TimeLogger> current : lowerMap.entrySet()) {
             current.getValue().getOwnChronometer().stop();
             current.getKey().setStepTime((int) current.getValue().getOwnChronometer().getDuration());
+            current.getKey().setStepEnd(Instant.now().toEpochMilli());
             sPBMStepDAO.insert(current.getKey());
         }
 
