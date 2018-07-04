@@ -132,8 +132,9 @@ CREATE TABLE "Item" (
   "ChunkExecutionID" int(11) NOT NULL,
   "TimeInMS" int(11) DEFAULT NULL,
   "Timestamp" BIGINT NOT NULL,
-  "ItemName" varchar(1000) NOT NULL,
-  "ItemClassName" varchar(255) NOT NULL,
+  "ItemName" varchar(300) NOT NULL,
+  "ItemReflection" varchar(1000),
+  "ItemClassName" varchar(255),
   "Error" tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY ("ItemID")
 );

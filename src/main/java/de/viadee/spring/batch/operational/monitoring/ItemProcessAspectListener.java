@@ -28,6 +28,8 @@
  */
 package de.viadee.spring.batch.operational.monitoring;
 
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.log4j.Logger;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -40,6 +42,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import de.viadee.spring.batch.infrastructure.LoggingWrapper;
+import de.viadee.spring.batch.infrastructure.SBPMConfiguration;
 import de.viadee.spring.batch.operational.chronometer.ChronoHelper;
 import de.viadee.spring.batch.operational.chronometer.Chronometer;
 import de.viadee.spring.batch.persistence.SPBMItemQueue;
@@ -59,6 +62,9 @@ public class ItemProcessAspectListener<I> {
 	@Autowired
 	SPBMItemQueue sPBMItemQueue;
 
+	@Autowired
+	private SBPMConfiguration sbpmConfig;
+	
 	private static final Logger LOGGER = LoggingWrapper.getLogger(ItemProcessAspectListener.class);
 
 	@Transactional(isolation = Isolation.READ_UNCOMMITTED)
@@ -79,10 +85,18 @@ public class ItemProcessAspectListener<I> {
 		// Stop Chrono
 		chronometer.stop();
 		if (!(itemProcessor instanceof CompositeItemProcessor)) {
+			String itemReflection = "";
+			String itemClassName = "";
+			if(sbpmConfig.isTrackanomaly()) {
+				itemClassName = item.getClass().getSimpleName();
+				final ReflectionToStringBuilder reflectionToStringBuilder = new ReflectionToStringBuilder(item,
+        				ToStringStyle.JSON_STYLE);
+				itemReflection = reflectionToStringBuilder.toString();
+			}
 			final SPBMItem sPBMItem = new SPBMItem(
 					chronoHelper.getActiveActionID(Thread.currentThread()), chronoHelper.getBatchChunkListener()
 							.getSPBMChunkExecution(Thread.currentThread()).getChunkExecutionID(),
-					(int) chronometer.getDuration(), 0, item.toString(), item.getClass().getSimpleName());
+					(int) chronometer.getDuration(), 0, item.toString(), itemReflection, itemClassName);
 			sPBMItemQueue.addItem(sPBMItem);
 		}
 		LOGGER.trace("ItemProcessor Around advice proceeded and has stopped its Chronometer");

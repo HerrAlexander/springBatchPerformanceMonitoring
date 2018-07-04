@@ -33,6 +33,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.log4j.Logger;
 
 import de.viadee.spring.batch.operational.chronometer.ChronoHelper;
@@ -78,7 +80,7 @@ class DatabaseScheduledWriter implements Runnable {
 
     private ChronoHelper chronoHelper;
 
-    private final String ITEMINSERTSQL = "INSERT INTO \"Item\" (\"ActionID\",\"ChunkExecutionID\",\"ItemName\", \"ItemClassName\", \"TimeInMS\",\"Timestamp\", \"Error\") VALUES (:actionID,:chunkExecutionID,:itemName,:className,:timeInMS,:timestamp,:error);";
+    private final String ITEMINSERTSQL = "INSERT INTO \"Item\" (\"ActionID\",\"ChunkExecutionID\",\"ItemName\", \"ItemClassName\", \"ItemReflection\", \"TimeInMS\",\"Timestamp\", \"Error\") VALUES (:actionID,:chunkExecutionID,:itemName,:className,:itemJson,:timeInMS,:timestamp,:error);";
 
     private final String CHUNKEXECUTIONINSERTSQL = "INSERT INTO \"ChunkExecution\" (\"ChunkExecutionID\", \"StepID\", \"StepName\", \"Iteration\",\"ChunkTime\") VALUES (:chunkExecutionID,:stepID,:stepName,:iteration,:chunkTime);";
 
@@ -146,7 +148,8 @@ class DatabaseScheduledWriter implements Runnable {
             params.put("actionID", "" + item.getActionID());
             params.put("chunkExecutionID", "" + item.getChunkExecutionID());
             params.put("itemName", "" + item.getItemName());
-            params.put("className", item.getItemClass());
+        	params.put("className", item.getItemClass());
+        	params.put("itemJson", "" + item.getItemReflection()); 
             params.put("timeInMS", "" + item.getTimeInMS());
             params.put("timestamp", "" + item.getTimestamp());
             params.put("error", "" + item.isError());

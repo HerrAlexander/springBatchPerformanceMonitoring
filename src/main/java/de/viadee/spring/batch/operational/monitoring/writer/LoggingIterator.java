@@ -30,9 +30,13 @@ package de.viadee.spring.batch.operational.monitoring.writer;
 
 import java.util.Iterator;
 
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import de.viadee.spring.batch.infrastructure.LoggingWrapper;
+import de.viadee.spring.batch.infrastructure.SBPMConfiguration;
 import de.viadee.spring.batch.operational.chronometer.ChronoHelper;
 import de.viadee.spring.batch.operational.chronometer.Chronometer;
 import de.viadee.spring.batch.persistence.SPBMItemQueue;
@@ -62,6 +66,9 @@ public class LoggingIterator<T> implements Iterator<T> {
 
 	private Chronometer iteratorChronometer = null;
 
+	@Autowired
+	private SBPMConfiguration sbpmConfig;
+	
 	public void setSPBMItemQueue(final SPBMItemQueue sPBMItemQueue) {
 		this.sPBMItemQueue = sPBMItemQueue;
 	}
@@ -80,10 +87,11 @@ public class LoggingIterator<T> implements Iterator<T> {
 		final boolean hasNext = iterator.hasNext();
 		if (!hasNext) {
 			iteratorChronometer.stop();
+
 			final SPBMItem sPBMItem = new SPBMItem(chronoHelper.getActiveActionID(Thread.currentThread()),
 					chronoHelper.getBatchChunkListener().getSPBMChunkExecution(Thread.currentThread())
 							.getChunkExecutionID(),
-					(int) iteratorChronometer.getDuration(), 0, iteratorChronometer.getObjectName(), iteratorChronometer.getObjectClass());
+					(int) iteratorChronometer.getDuration(), 0, iteratorChronometer.getObjectName(), iteratorChronometer.getObjectReflection(), iteratorChronometer.getObjectClass());
 
 			sPBMItemQueue.addItem(sPBMItem);
 		}
@@ -97,13 +105,23 @@ public class LoggingIterator<T> implements Iterator<T> {
 			final SPBMItem sPBMItem = new SPBMItem(chronoHelper.getActiveActionID(Thread.currentThread()),
 					chronoHelper.getBatchChunkListener().getSPBMChunkExecution(Thread.currentThread())
 							.getChunkExecutionID(),
-					(int) iteratorChronometer.getDuration(), 0, iteratorChronometer.getObjectName(), iteratorChronometer.getObjectClass());
+					(int) iteratorChronometer.getDuration(), 0, iteratorChronometer.getObjectName(), iteratorChronometer.getObjectReflection(), iteratorChronometer.getObjectClass());
 			sPBMItemQueue.addItem(sPBMItem);
 		}
 		final T next = iterator.next();
 		iteratorChronometer = new Chronometer();
 		iteratorChronometer.setObjectName(next.toString());
-		iteratorChronometer.setObjectClass(next.getClass().getSimpleName());
+		
+		String itemReflection = "";
+		String itemClassName = "";
+		if(true) {
+			itemClassName = next.getClass().getSimpleName();
+			final ReflectionToStringBuilder reflectionToStringBuilder = new ReflectionToStringBuilder(next,
+    				ToStringStyle.JSON_STYLE);
+			itemReflection = reflectionToStringBuilder.toString();
+		}
+		iteratorChronometer.setObjectClass(itemClassName);
+		iteratorChronometer.setObjectReflection(itemReflection);
 		iteratorChronometer.startChronometer();
 		return next;
 	}

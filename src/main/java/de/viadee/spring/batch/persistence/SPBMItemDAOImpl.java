@@ -35,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import de.viadee.spring.batch.infrastructure.JdbcTemplateHolder;
+import de.viadee.spring.batch.infrastructure.SBPMConfiguration;
 import de.viadee.spring.batch.persistence.types.SPBMItem;
 
 /**
@@ -47,8 +48,9 @@ public class SPBMItemDAOImpl implements SPBMItemDAO {
     @Autowired
     private JdbcTemplateHolder jdbcTemplateHolder;
 
+     
     private final String INSERTSQL = "INSERT INTO \"Item\" (\"ActionID\",\"ChunkExecutionID\",\"ItemName\",\"TimeInMS\",\"Error\") VALUES (:actionID,:chunkExecutionID,:itemName,:timeInMS,:error);";
-
+ 
     @Override
     public void insert(final SPBMItem sPBMItem) { // TODO: Create a batch-update
                                                   // method
@@ -59,7 +61,10 @@ public class SPBMItemDAOImpl implements SPBMItemDAO {
         params.put("timeInMS", "" + sPBMItem.getTimeInMS());
         params.put("error", "" + sPBMItem.isError());
 
+        
+
         jdbcTemplateHolder.getJdbcTemplate().update(INSERTSQL, params);
+        
     }
 
 }

@@ -48,6 +48,8 @@ public class Chronometer {
      * This variable is supposed to hold the name for the Object, the Chronometer is bound to.
      */
     private String objectName;
+    
+    private String objectReflection;
 
     private String objectClass;
     
@@ -88,6 +90,14 @@ public class Chronometer {
         return objectName;
     }
 
+    public void setObjectReflection(final String objectReflection) {
+        this.objectReflection = objectReflection;
+    }
+    
+    public String getObjectReflection() {
+        return objectReflection;
+    }
+    
     public void setObjectName(final String objectName) {
         this.objectName = objectName;
     }

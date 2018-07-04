@@ -52,6 +52,8 @@ public class SPBMItem {
 
     private final String itemName;
 
+    private final String itemReflection;
+    
     private final String itemClass;
     
     private final long timestamp;
@@ -59,7 +61,7 @@ public class SPBMItem {
     private final int error;
     
     public SPBMItem(final int actionID, final int chunkExecutionID, final int timeInMS, final int error,
-            String itemName, String itemClass) {
+            String itemName, String itemReflection, String itemClass) {
         super();
         this.actionID = actionID;
         this.chunkExecutionID = chunkExecutionID;
@@ -69,8 +71,9 @@ public class SPBMItem {
         if (itemName.length() >= 1000) {
             itemName = itemName.substring(0, 1000);
         }
-        this.itemClass = itemClass;
         this.itemName = itemName;
+        this.itemReflection = itemReflection;
+        this.itemClass = itemClass;
     }
 
     public String getItemName() {
@@ -80,6 +83,11 @@ public class SPBMItem {
     public String getItemClass() {
         return itemClass;
     }
+    
+    public String getItemReflection() {
+        return itemReflection;
+    }
+
     
     public int getActionID() {
         return actionID;
