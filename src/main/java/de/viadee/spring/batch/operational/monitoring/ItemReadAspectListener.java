@@ -63,7 +63,7 @@ public class ItemReadAspectListener {
 
 	@Autowired
 	private SBPMConfiguration sbpmConfig;
-	
+
 	private static final Logger LOGGER = LoggingWrapper.getLogger(ItemReadAspectListener.class);
 
 	@Transactional(isolation = Isolation.READ_UNCOMMITTED)
@@ -89,15 +89,15 @@ public class ItemReadAspectListener {
 		if (!(readItem == null)) {
 			String itemReflection = "";
 			String itemClassName = "";
-			if(sbpmConfig.isTrackanomaly()) {
+			if (sbpmConfig.trackAnomaly()) {
 				itemClassName = readItem.getClass().getSimpleName();
 				final ReflectionToStringBuilder reflectionToStringBuilder = new ReflectionToStringBuilder(readItem,
-        				ToStringStyle.JSON_STYLE);
+						ToStringStyle.JSON_STYLE);
 				itemReflection = reflectionToStringBuilder.toString();
 			}
-			final SPBMItem sPBMItem = new SPBMItem(
-					chronoHelper.getActiveActionID(Thread.currentThread()), chronoHelper.getBatchChunkListener()
-							.getSPBMChunkExecution(Thread.currentThread()).getChunkExecutionID(),
+			final SPBMItem sPBMItem = new SPBMItem(chronoHelper.getActiveActionID(Thread.currentThread()),
+					chronoHelper.getBatchChunkListener().getSPBMChunkExecution(Thread.currentThread())
+							.getChunkExecutionID(),
 					(int) itemChronometer.getDuration(), 0, readItem.toString(), itemReflection, itemClassName);
 			sPBMItemQueue.addItem(sPBMItem);
 

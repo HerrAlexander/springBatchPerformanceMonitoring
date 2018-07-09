@@ -154,6 +154,7 @@ class DatabaseScheduledWriter implements Runnable {
             params.put("timestamp", "" + item.getTimestamp());
             params.put("error", "" + item.isError());
             parameters[counter++] = params;
+            LOG.info("flushItemList:" + item.getItemClass());
         }
         final long startFlush = System.currentTimeMillis();
         this.jdbcTemplateHolder.getJdbcTemplate().batchUpdate(ITEMINSERTSQL, parameters);

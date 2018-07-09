@@ -42,6 +42,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import de.viadee.spring.batch.infrastructure.LoggingWrapper;
+import de.viadee.spring.batch.infrastructure.SBPMConfiguration;
 import de.viadee.spring.batch.operational.chronometer.ChronoHelper;
 import de.viadee.spring.batch.operational.monitoring.writer.LoggingList;
 import de.viadee.spring.batch.persistence.SPBMItemQueue;
@@ -64,9 +65,12 @@ public class ItemWriteAspectListener {
 	@Autowired
 	private SPBMItemQueue sPBMItemQueue;
 
+	@Autowired
+	private SBPMConfiguration sbpmConfig;
+
 	/**
-	 * Variable to hold the number of the current writer (since we cannot get
-	 * its object name)
+	 * Variable to hold the number of the current writer (since we cannot get its
+	 * object name)
 	 */
 	int currentWriterNumber;
 
@@ -101,6 +105,7 @@ public class ItemWriteAspectListener {
 		final LoggingList list = new LoggingList(items, "Writer" + itemWriter.hashCode());
 		list.setChronoHelper(chronoHelper);
 		list.setSPBMItemQueue(sPBMItemQueue);
+		list.setSPBMConfig(sbpmConfig);
 
 		if (chronoHelper.getBatchChunkListener().getProcessor().getOwnChronometer().getIsRunning()) {
 			chronoHelper.getBatchChunkListener().getProcessor().getOwnChronometer().stop();

@@ -6,8 +6,6 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 
 public class SBPMConfiguration {
 
@@ -32,7 +30,7 @@ public class SBPMConfiguration {
 		return driver;
 	}
 
-	public boolean isTrackanomaly() {
+	public boolean trackAnomaly() {
 		return trackanomaly;
 	}
 
@@ -56,9 +54,9 @@ public class SBPMConfiguration {
 
 		// Fill in Default Values
 		InputStream input = null;
+		ClassLoader classloader = Thread.currentThread().getContextClassLoader();
 		try {
-			final Resource resource = new ClassPathResource("springBatchMonitoringDefault.properties");
-			input = resource.getInputStream();
+			input = classloader.getResourceAsStream("springBatchMonitoringDefault.properties");
 			setConfigProperties(input);
 		} catch (final FileNotFoundException e1) {
 			LOG.warn("SpringBatchMonitoringDefault.properties file not found.");
@@ -74,8 +72,10 @@ public class SBPMConfiguration {
 
 		// Override with user config properties
 		try {
-			final Resource resource = new ClassPathResource("SpringBatchMonitoring.properties");
-			input = resource.getInputStream();
+			// final Resource resource = new
+			// ClassPathResource("springBatchMonitoring.properties");
+			input = classloader.getResourceAsStream("springBatchMonitoring.properties");
+			// input = resource.getInputStream();
 			setConfigProperties(input);
 		} catch (final NullPointerException e) {
 			LOG.warn(
@@ -98,7 +98,8 @@ public class SBPMConfiguration {
 		password = properties.getProperty("db.password", password);
 		driver = properties.getProperty("db.driver", driver);
 		url = properties.getProperty("db.url", url);
-		trackanomaly = Boolean.parseBoolean(properties.getProperty("db.anomalydetection", String.valueOf(trackanomaly)));
+		trackanomaly = Boolean
+				.parseBoolean(properties.getProperty("db.anomalydetection", String.valueOf(trackanomaly)));
 
 	}
 }

@@ -66,7 +66,7 @@ public class SPBMJobDAOImpl implements SPBMJobDAO {
 		params.put("duration", "" + job.getDuration());
 		jdbcTemplateHolder.getJdbcTemplate().update(INSERTSQL, params);
 
-		if (sbpmConfig.isTrackanomaly()) {
+		if (sbpmConfig.trackAnomaly()) {
 			insertMeta(job);
 		}
 	}

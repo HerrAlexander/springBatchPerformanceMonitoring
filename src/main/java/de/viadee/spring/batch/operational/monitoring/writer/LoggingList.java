@@ -36,6 +36,7 @@ import java.util.ListIterator;
 import org.apache.log4j.Logger;
 
 import de.viadee.spring.batch.infrastructure.LoggingWrapper;
+import de.viadee.spring.batch.infrastructure.SBPMConfiguration;
 import de.viadee.spring.batch.operational.chronometer.ChronoHelper;
 import de.viadee.spring.batch.persistence.SPBMItemQueue;
 
@@ -60,6 +61,8 @@ public class LoggingList<T> implements List<T> {
 	private final List<T> list;
 
 	private final String hashCode;
+
+	private SBPMConfiguration sbpmConfig;
 
 	public LoggingList(final List<T> list, final String hashCode) {
 
@@ -134,6 +137,7 @@ public class LoggingList<T> implements List<T> {
 		final LoggingIterator<T> loggingIterator = new LoggingIterator<T>(list.iterator(), hashCode);
 		loggingIterator.setChronoHelper(chronoHelper);
 		loggingIterator.setSPBMItemQueue(sPBMItemQueue);
+		loggingIterator.setSPBMConfig(sbpmConfig);
 		return loggingIterator;
 	}
 
@@ -196,5 +200,9 @@ public class LoggingList<T> implements List<T> {
 	@Override
 	public Object[] toArray(final Object[] a) {
 		return list.toArray(a);
+	}
+
+	public void setSPBMConfig(SBPMConfiguration sbpmConfig) {
+		this.sbpmConfig = sbpmConfig;
 	}
 }

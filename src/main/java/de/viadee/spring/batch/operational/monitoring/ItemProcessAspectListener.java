@@ -87,7 +87,9 @@ public class ItemProcessAspectListener<I> {
 		if (!(itemProcessor instanceof CompositeItemProcessor)) {
 			String itemReflection = "";
 			String itemClassName = "";
-			if(sbpmConfig.isTrackanomaly()) {
+			
+			if(sbpmConfig.trackAnomaly()) {
+				LOGGER.trace("Write ItemReflection to DB");
 				itemClassName = item.getClass().getSimpleName();
 				final ReflectionToStringBuilder reflectionToStringBuilder = new ReflectionToStringBuilder(item,
         				ToStringStyle.JSON_STYLE);
