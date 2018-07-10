@@ -54,8 +54,8 @@ public class SPBMJobDAOImpl implements SPBMJobDAO {
 
 	private final String INSERTSQL = "INSERT INTO \"Job\" (\"JobID\",\"JobName\",\"JobStart\",\"JobEnd\",\"Duration\") VALUES (:jobID,:jobName,:jobStart,:jobEnd,:duration);";
 
-	private final String INSERTMETASQL = "INSERT INTO \"BatchRuns\"(\"JobID\", \"StepID\", \"ActionType\", \"JobName\", \"StepName\", \"StepStart\", \"StepEnd\", \"ActionName\",  \"TotalTime\", \"ProcessedItems\", \"MeanTimePerItem\") SELECT  \"OV\".*,  (\"OV\".\"Total\"/ \"OV\".\"ProcessedItems\") AS \"MeanTimePerItem\" FROM \"Overview\" AS \"OV\";";
-	
+	private final String INSERTMETASQL = "INSERT INTO \"BatchRuns\"(\"JobID\", \"StepID\", \"ActionType\", \"JobName\", \"StepName\", \"StepStart\", \"StepEnd\", \"ActionName\",  \"TotalTime\", \"ProcessedItems\", \"MeanTimePerItem\") SELECT  \"OV\".*,  (\"OV\".\"Total\"/ \"OV\".\"ProcessedItems\") AS \"MeanTimePerItem\" FROM \"Overview\" AS \"OV\" WHERE \"OV\".\"JobID\" = :jobID;";
+
 	@Override
 	public void insert(final SPBMJob job) {
 		final Map<String, String> params = new HashMap<String, String>();
@@ -65,7 +65,6 @@ public class SPBMJobDAOImpl implements SPBMJobDAO {
 		params.put("jobEnd", String.valueOf(job.getJobEnd()));
 		params.put("duration", "" + job.getDuration());
 		jdbcTemplateHolder.getJdbcTemplate().update(INSERTSQL, params);
-
 		if (sbpmConfig.trackAnomaly()) {
 			insertMeta(job);
 		}

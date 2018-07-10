@@ -33,6 +33,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 
 import de.viadee.spring.batch.persistence.SPBMChunkExecutionQueue;
+import de.viadee.spring.batch.persistence.SPBMItemDAOImpl;
 import de.viadee.spring.batch.persistence.SPBMItemQueue;
 
 /**
@@ -49,6 +50,7 @@ public class JobEndQueueCleaner {
     public JobEndQueueCleaner(final SPBMItemQueue sPBMItemQueue, final SPBMChunkExecutionQueue sPBMChunkExecutionQueue,
             final JdbcTemplateHolder templateHolder) {
         this.dbScheduledWriter = new DatabaseScheduledWriter();
+        dbScheduledWriter.setSPBMItemDAO(new SPBMItemDAOImpl());
         dbScheduledWriter.setJdbcTemplateHolder(templateHolder);
         dbScheduledWriter.setSPBMItemQueue(sPBMItemQueue);
         dbScheduledWriter.setSPBMChunkExecutionQueue(sPBMChunkExecutionQueue);

@@ -33,6 +33,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 import de.viadee.spring.batch.operational.chronometer.ChronoHelper;
 import de.viadee.spring.batch.persistence.SPBMChunkExecutionQueue;
+import de.viadee.spring.batch.persistence.SPBMItemDAOImpl;
 import de.viadee.spring.batch.persistence.SPBMItemQueue;
 
 /**
@@ -62,6 +63,7 @@ public class SchedulingHolder {
 
         heldTaskScheduler.afterPropertiesSet();
         final DatabaseScheduledWriter dbScheduledWriter = new DatabaseScheduledWriter();
+        dbScheduledWriter.setSPBMItemDAO(new SPBMItemDAOImpl());
         dbScheduledWriter.setSPBMItemQueue(sPBMItemQueue);
         dbScheduledWriter.setSPBMChunkExecutionQueue(sPBMChunkExecutionQueue);
         dbScheduledWriter.setJdbcTemplateHolder(jdbcTemplateHolder);

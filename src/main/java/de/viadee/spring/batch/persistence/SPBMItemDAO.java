@@ -28,6 +28,9 @@
  */
 package de.viadee.spring.batch.persistence;
 
+import java.util.List;
+
+import de.viadee.spring.batch.infrastructure.JdbcTemplateHolder;
 import de.viadee.spring.batch.persistence.types.SPBMItem;
 
 /**
@@ -37,4 +40,8 @@ import de.viadee.spring.batch.persistence.types.SPBMItem;
 public interface SPBMItemDAO {
 
     public void insert(SPBMItem sPBMItem);
+
+    public void insertBatch(List<SPBMItem> itemList);
+
+	public void setJdbcTemplateHolder(JdbcTemplateHolder jdbcTemplateHolder);
 }
