@@ -32,6 +32,7 @@ import org.apache.log4j.Logger;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 
+import de.viadee.spring.batch.persistence.SPBMChunkExecutionDAOImpl;
 import de.viadee.spring.batch.persistence.SPBMChunkExecutionQueue;
 import de.viadee.spring.batch.persistence.SPBMItemDAOImpl;
 import de.viadee.spring.batch.persistence.SPBMItemQueue;
@@ -43,23 +44,24 @@ import de.viadee.spring.batch.persistence.SPBMItemQueue;
 @EnableAsync
 public class JobEndQueueCleaner {
 
-    private final DatabaseScheduledWriter dbScheduledWriter;
+	private final DatabaseScheduledWriter dbScheduledWriter;
 
-    private static final Logger LOG = LoggingWrapper.getLogger(JobEndQueueCleaner.class);
+	private static final Logger LOG = LoggingWrapper.getLogger(JobEndQueueCleaner.class);
 
-    public JobEndQueueCleaner(final SPBMItemQueue sPBMItemQueue, final SPBMChunkExecutionQueue sPBMChunkExecutionQueue,
-            final JdbcTemplateHolder templateHolder) {
-        this.dbScheduledWriter = new DatabaseScheduledWriter();
-        dbScheduledWriter.setSPBMItemDAO(new SPBMItemDAOImpl());
-        dbScheduledWriter.setJdbcTemplateHolder(templateHolder);
-        dbScheduledWriter.setSPBMItemQueue(sPBMItemQueue);
-        dbScheduledWriter.setSPBMChunkExecutionQueue(sPBMChunkExecutionQueue);
-    }
+	public JobEndQueueCleaner(final SPBMItemQueue sPBMItemQueue, final SPBMChunkExecutionQueue sPBMChunkExecutionQueue,
+			final JdbcTemplateHolder templateHolder) {
+		this.dbScheduledWriter = new DatabaseScheduledWriter();
+		dbScheduledWriter.setSPBMItemDAO(new SPBMItemDAOImpl());
+		dbScheduledWriter.setSPBMChunkExecutionDAO(new SPBMChunkExecutionDAOImpl());
+		dbScheduledWriter.setJdbcTemplateHolder(templateHolder);
+		dbScheduledWriter.setSPBMItemQueue(sPBMItemQueue);
+		dbScheduledWriter.setSPBMChunkExecutionQueue(sPBMChunkExecutionQueue);
+	}
 
-    @Async
-    public void asyncTest(final String jobName) throws InterruptedException {
-        LOG.debug("Cleaning up for Job " + jobName);
-        dbScheduledWriter.run();
-        LOG.debug("Cleaned up for job " + jobName);
-    }
+	@Async
+	public void asyncTest(final String jobName) throws InterruptedException {
+		LOG.debug("Cleaning up for Job " + jobName);
+		dbScheduledWriter.run();
+		LOG.debug("Cleaned up for job " + jobName);
+	}
 }

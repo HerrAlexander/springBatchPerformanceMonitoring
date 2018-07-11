@@ -29,17 +29,14 @@
 package de.viadee.spring.batch.infrastructure;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import de.viadee.spring.batch.operational.chronometer.ChronoHelper;
+import de.viadee.spring.batch.persistence.SPBMChunkExecutionDAO;
 import de.viadee.spring.batch.persistence.SPBMChunkExecutionQueue;
 import de.viadee.spring.batch.persistence.SPBMItemDAO;
-import de.viadee.spring.batch.persistence.SPBMItemDAOImpl;
 import de.viadee.spring.batch.persistence.SPBMItemQueue;
 import de.viadee.spring.batch.persistence.types.SPBMChunkExecution;
 import de.viadee.spring.batch.persistence.types.SPBMItem;
@@ -81,13 +78,11 @@ class DatabaseScheduledWriter implements Runnable {
 
 	private SPBMItemDAO sPBMItemDao;
 
-	private JdbcTemplateHolder jdbcTemplateHolder;
+	private SPBMChunkExecutionDAO sPBMChunkExecutionDao;
 
 	private SPBMChunkExecutionQueue sPBMChunkExecutionQueue;
 
 	private ChronoHelper chronoHelper;
-
-	private final String CHUNKEXECUTIONINSERTSQL = "INSERT INTO \"ChunkExecution\" (\"ChunkExecutionID\", \"StepID\", \"StepName\", \"Iteration\",\"ChunkTime\") VALUES (:chunkExecutionID,:stepID,:stepName,:iteration,:chunkTime);";
 
 	public void setSPBMItemQueue(final SPBMItemQueue sPBMItemQueue) {
 		this.sPBMItemQueue = sPBMItemQueue;
@@ -97,18 +92,21 @@ class DatabaseScheduledWriter implements Runnable {
 		this.sPBMChunkExecutionQueue = sPBMChunkExecutionQueue;
 	}
 
+	public void setSPBMItemDAO(SPBMItemDAO sPBMItemDao) {
+		this.sPBMItemDao = sPBMItemDao;
+	}
+
 	public void setJdbcTemplateHolder(final JdbcTemplateHolder jdbcTemplateHolder) {
-		this.jdbcTemplateHolder = jdbcTemplateHolder;
 		this.sPBMItemDao.setJdbcTemplateHolder(jdbcTemplateHolder);
+		this.sPBMChunkExecutionDao.setJdbcTemplateHolder(jdbcTemplateHolder);
 	}
 
 	public void setChronoHelper(final ChronoHelper chronoHelper) {
 		this.chronoHelper = chronoHelper;
 	}
 
-	public void setSPBMItemDAO(SPBMItemDAO spbmItemDAO) {
-		this.sPBMItemDao = spbmItemDAO;
-
+	public void setSPBMChunkExecutionDAO(SPBMChunkExecutionDAO sPBMChunkExecutionDao) {
+		this.sPBMChunkExecutionDao = sPBMChunkExecutionDao;
 	}
 
 	@Override
@@ -152,30 +150,17 @@ class DatabaseScheduledWriter implements Runnable {
 		final long startFlush = System.currentTimeMillis();
 		sPBMItemDao.insertBatch(itemList);
 		final long endFlush = System.currentTimeMillis();
-		LOG.debug((endFlush - startFlush) + "ms to flush " + itemList.size() + "items and build the map");
+		LOG.debug((endFlush - startFlush) + "ms to flush " + itemList.size() + "items and to build the map");
 		LOG.debug("Flushed");
 	}
 
 	public void flushChunkExecutionList(final List<SPBMChunkExecution> chunkExecutionList) {
 		LOG.debug("Flushing ChunkList with " + chunkExecutionList.size() + " ChunkExecutions");
-		final long startCalc = System.currentTimeMillis();
-		final Map<String, String>[] parameters = new Map[chunkExecutionList.size()];
-		Map<String, String> params;
-		int counter = 0;
-		for (final SPBMChunkExecution sPBMChunkExecution : chunkExecutionList) {
-			params = new HashMap<String, String>();
-			params.put("chunkExecutionID", "" + sPBMChunkExecution.getChunkExecutionID());
-			params.put("stepID", "" + sPBMChunkExecution.getStepID());
-			params.put("stepName", sPBMChunkExecution.getStepName());
-			params.put("iteration", "" + sPBMChunkExecution.getIteration());
-			params.put("chunkTime", "" + sPBMChunkExecution.getChunkTime());
-			parameters[counter++] = params;
-		}
 		final long startFlush = System.currentTimeMillis();
-		this.jdbcTemplateHolder.getJdbcTemplate().batchUpdate(CHUNKEXECUTIONINSERTSQL, parameters);
+		sPBMChunkExecutionDao.insertBatch(chunkExecutionList);
 		final long endFlush = System.currentTimeMillis();
-		LOG.debug((endFlush - startFlush) + "ms to flush " + chunkExecutionList.size() + " ChunkExecutions and "
-				+ (startFlush - startCalc) + "ms to build the map");
+		LOG.debug((endFlush - startFlush) + "ms to flush " + chunkExecutionList.size()
+				+ " ChunkExecutions and to build the map");
 		LOG.debug("Flushed");
 	}
 
