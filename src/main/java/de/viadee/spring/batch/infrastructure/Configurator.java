@@ -41,8 +41,6 @@ import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import de.viadee.spring.batch.operational.chronometer.ChronoHelper;
@@ -72,6 +70,9 @@ public class Configurator {
 
 	@Autowired
 	private SPBMChunkExecutionQueue spbmChunkExecutionQueue;
+
+	@Autowired
+	private SBPMConfiguration sbpmConfig;
 
 	@Autowired
 	private ChronoHelper chronoHelper;
@@ -116,15 +117,9 @@ public class Configurator {
 		LOGGER.info("Spring batch Monitoring Tool has been successfully loaded.");
 	}
 
-	// TODO: As Singleton Bean?
-	@Bean
-	public SBPMConfiguration getConfig() {
-		return new SBPMConfiguration();
-	}
-
 	@Bean
 	public DataSourceHolder getDataSourceHolder() {
-		return new DataSourceHolder(getConfig());
+		return new DataSourceHolder(sbpmConfig);
 	}
 
 }

@@ -33,8 +33,6 @@ import java.sql.Driver;
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
@@ -56,7 +54,6 @@ public final class DataSourceHolder {
 
     private final DataSource datasource;
 
-  
     SBPMConfiguration config; 
     
     DataSourceHolder(SBPMConfiguration config) {
@@ -68,7 +65,6 @@ public final class DataSourceHolder {
     public DataSource getDataSource() {
         return datasource;
     }
-
 
     protected DataSource createDataSource() {
 

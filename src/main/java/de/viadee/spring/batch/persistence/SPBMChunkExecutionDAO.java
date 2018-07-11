@@ -28,6 +28,9 @@
  */
 package de.viadee.spring.batch.persistence;
 
+import java.util.List;
+
+import de.viadee.spring.batch.infrastructure.JdbcTemplateHolder;
 import de.viadee.spring.batch.persistence.types.SPBMChunkExecution;
 
 /**
@@ -37,4 +40,9 @@ import de.viadee.spring.batch.persistence.types.SPBMChunkExecution;
 public interface SPBMChunkExecutionDAO {
 
     public void insert(SPBMChunkExecution sPBMChunkExecution);
+
+    public void insertBatch(List<SPBMChunkExecution> chunkExecutionList);
+    
+    public void setJdbcTemplateHolder(JdbcTemplateHolder jdbcTemplateHolder);
+    
 }

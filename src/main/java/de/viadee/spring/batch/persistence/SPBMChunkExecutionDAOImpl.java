@@ -29,35 +29,53 @@
 package de.viadee.spring.batch.persistence;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 
 import de.viadee.spring.batch.infrastructure.JdbcTemplateHolder;
 import de.viadee.spring.batch.persistence.types.SPBMChunkExecution;
 
 /**
- * DAO Object for the Action ChunkExecution. See SpbmChunkExecution Class for further Details.
+ * DAO Object for the Action ChunkExecution. See SpbmChunkExecution Class for
+ * further Details.
  * 
  */
-@Repository
 public class SPBMChunkExecutionDAOImpl implements SPBMChunkExecutionDAO {
 
-    @Autowired
-    private JdbcTemplateHolder jdbcTemplateHolder;
+	private JdbcTemplateHolder jdbcTemplateHolder;
 
-    private final String INSERTSQL = "INSERT INTO \"ChunkExecution\" (\"ChunkExecutionID\", \"StepID\", \"StepName\", \"Iteration\",\"ChunkTime\") VALUES (:chunkExecutionID,:stepID,:stepName,:iteration,:chunkTime);";
+	private final String CHUNKEXECUTIONINSERTSQL = "INSERT INTO \"ChunkExecution\" (\"ChunkExecutionID\", \"StepID\", \"StepName\", \"Iteration\",\"ChunkTime\") VALUES (:chunkExecutionID,:stepID,:stepName,:iteration,:chunkTime);";
 
-    @Override
-    public void insert(final SPBMChunkExecution sPBMChunkExecution) {
-        final Map<String, String> params = new HashMap<String, String>();
-        params.put("chunkExecutionID", "" + sPBMChunkExecution.getChunkExecutionID());
-        params.put("stepID", "" + sPBMChunkExecution.getStepID());
-        params.put("stepName", sPBMChunkExecution.getStepName());
-        params.put("iteration", "" + sPBMChunkExecution.getIteration());
-        params.put("chunkTime", "" + sPBMChunkExecution.getChunkTime());
-        jdbcTemplateHolder.getJdbcTemplate().update(INSERTSQL, params);
-    }
+	@Override
+	public void insert(final SPBMChunkExecution sPBMChunkExecution) {
+		final Map<String, String> params = getParams(sPBMChunkExecution);
+		jdbcTemplateHolder.getJdbcTemplate().update(CHUNKEXECUTIONINSERTSQL, params);
+	}
 
+	@Override
+	public void insertBatch(final List<SPBMChunkExecution> chunkExecutionList) {
+		final Map<String, String>[] parameters = new Map[chunkExecutionList.size()];
+		Map<String, String> params;
+		int counter = 0;
+		for (final SPBMChunkExecution sPBMChunkExecution : chunkExecutionList) {
+			params = getParams(sPBMChunkExecution);
+			parameters[counter++] = params;
+		}
+		this.jdbcTemplateHolder.getJdbcTemplate().batchUpdate(CHUNKEXECUTIONINSERTSQL, parameters);
+	}
+
+	private Map<String, String> getParams(final SPBMChunkExecution sPBMChunkExecution) {
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("chunkExecutionID", "" + sPBMChunkExecution.getChunkExecutionID());
+		params.put("stepID", "" + sPBMChunkExecution.getStepID());
+		params.put("stepName", sPBMChunkExecution.getStepName());
+		params.put("iteration", "" + sPBMChunkExecution.getIteration());
+		params.put("chunkTime", "" + sPBMChunkExecution.getChunkTime());
+		return params;
+	}
+
+	@Override
+	public void setJdbcTemplateHolder(JdbcTemplateHolder jdbcTemplateHolder) {
+		this.jdbcTemplateHolder = jdbcTemplateHolder;
+	}
 }
