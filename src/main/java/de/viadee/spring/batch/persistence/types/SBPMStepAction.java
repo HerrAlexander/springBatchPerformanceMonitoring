@@ -26,39 +26,31 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package de.viadee.spring.batch.persistence;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-
-import de.viadee.spring.batch.infrastructure.JdbcTemplateHolder;
-import de.viadee.spring.batch.persistence.types.SPBMStep;
+package de.viadee.spring.batch.persistence.types;
 
 /**
- * DAO Object for the Step Object. See SpbmStep Class for further Details.
+ * This is the Database representation the interconnection between a Step and an Action. This is needed to speed up
+ * analytical querys (also for the provided views), since gathering this connection from the database would need to join
+ * almost all tables which is impractical when a lot of items have been measured.
  * 
- *
  */
-@Repository
-public class SPBMStepDAOImpl implements SPBMStepDAO {
+public class SBPMStepAction {
 
-    @Autowired
-    private JdbcTemplateHolder jdbcTemplateHolder;
+    private final int stepID;
 
-    private final String INSERTSQL = "INSERT INTO \"Step\" (\"StepID\",\"JobID\",\"StepName\",\"StepStart\",\"StepEnd\",\"StepTime\") VALUES (:stepID, :jobID, :stepName, :stepStart, :stepEnd, :stepTime);";
+    private final int actionID;
 
-    @Override
-    public void insert(final SPBMStep sPBMStep) {
-        final Map<String, String> params = new HashMap<String, String>();
-        params.put("stepID", "" + sPBMStep.getStepID());
-        params.put("jobID", "" + sPBMStep.getJobID());
-        params.put("stepName", sPBMStep.getStepName());
-		params.put("stepStart", String.valueOf(sPBMStep.getStepStart()));
-		params.put("stepEnd", String.valueOf(sPBMStep.getStepEnd()));
-        params.put("stepTime", "" + sPBMStep.getStepTime());
-        jdbcTemplateHolder.getJdbcTemplate().update(INSERTSQL, params);
+    public SBPMStepAction(final int stepID, final int actionID) {
+        this.stepID = stepID;
+        this.actionID = actionID;
     }
+
+    public int getStepID() {
+        return stepID;
+    }
+
+    public int getActionID() {
+        return actionID;
+    }
+
 }

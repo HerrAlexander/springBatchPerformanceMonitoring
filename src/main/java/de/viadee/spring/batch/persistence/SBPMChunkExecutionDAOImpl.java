@@ -33,38 +33,38 @@ import java.util.List;
 import java.util.Map;
 
 import de.viadee.spring.batch.infrastructure.JdbcTemplateHolder;
-import de.viadee.spring.batch.persistence.types.SPBMChunkExecution;
+import de.viadee.spring.batch.persistence.types.SBPMChunkExecution;
 
 /**
  * DAO Object for the Action ChunkExecution. See SpbmChunkExecution Class for
  * further Details.
  * 
  */
-public class SPBMChunkExecutionDAOImpl implements SPBMChunkExecutionDAO {
+public class SBPMChunkExecutionDAOImpl implements SBPMChunkExecutionDAO {
 
 	private JdbcTemplateHolder jdbcTemplateHolder;
 
 	private final String CHUNKEXECUTIONINSERTSQL = "INSERT INTO \"ChunkExecution\" (\"ChunkExecutionID\", \"StepID\", \"StepName\", \"Iteration\",\"ChunkTime\") VALUES (:chunkExecutionID,:stepID,:stepName,:iteration,:chunkTime);";
 
 	@Override
-	public void insert(final SPBMChunkExecution sPBMChunkExecution) {
+	public void insert(final SBPMChunkExecution sPBMChunkExecution) {
 		final Map<String, String> params = getParams(sPBMChunkExecution);
 		jdbcTemplateHolder.getJdbcTemplate().update(CHUNKEXECUTIONINSERTSQL, params);
 	}
 
 	@Override
-	public void insertBatch(final List<SPBMChunkExecution> chunkExecutionList) {
+	public void insertBatch(final List<SBPMChunkExecution> chunkExecutionList) {
 		final Map<String, String>[] parameters = new Map[chunkExecutionList.size()];
 		Map<String, String> params;
 		int counter = 0;
-		for (final SPBMChunkExecution sPBMChunkExecution : chunkExecutionList) {
+		for (final SBPMChunkExecution sPBMChunkExecution : chunkExecutionList) {
 			params = getParams(sPBMChunkExecution);
 			parameters[counter++] = params;
 		}
 		this.jdbcTemplateHolder.getJdbcTemplate().batchUpdate(CHUNKEXECUTIONINSERTSQL, parameters);
 	}
 
-	private Map<String, String> getParams(final SPBMChunkExecution sPBMChunkExecution) {
+	private Map<String, String> getParams(final SBPMChunkExecution sPBMChunkExecution) {
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("chunkExecutionID", "" + sPBMChunkExecution.getChunkExecutionID());
 		params.put("stepID", "" + sPBMChunkExecution.getStepID());

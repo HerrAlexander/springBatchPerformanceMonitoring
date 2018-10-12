@@ -28,41 +28,20 @@
  */
 package de.viadee.spring.batch.persistence;
 
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.List;
 
-import org.apache.log4j.Logger;
-import org.springframework.stereotype.Component;
-
-import de.viadee.spring.batch.infrastructure.LoggingWrapper;
-import de.viadee.spring.batch.persistence.types.SPBMChunkExecution;
+import de.viadee.spring.batch.infrastructure.JdbcTemplateHolder;
+import de.viadee.spring.batch.persistence.types.SBPMItem;
 
 /**
- * This class holds a ThreadSafe Queue containing ChunkExecution Objects that shall be stored in the Database.
- * 
- * Whenever a SpbmChunkExecution Object shall be persisted into the Database, it is pushed into this List.
- * 
- * The DatabaseScheduledWriter takes care of emptying this list and persisting the Entrys into the Database.
- * 
- * See DatabaseScheduledWriter class for further Details.
+ * DAO Interface for the Item Object. See SpbmItem Class for further Details.
  * 
  */
-@Component
-public class SPBMChunkExecutionQueue {
+public interface SBPMItemDAO {
 
-    private final Queue<SPBMChunkExecution> chunkExecutionQueue = new ConcurrentLinkedQueue<SPBMChunkExecution>();
+    public void insert(SBPMItem sPBMItem);
 
-    private static final Logger LOG = LoggingWrapper.getLogger(SPBMChunkExecutionQueue.class);
+    public void insertBatch(List<SBPMItem> itemList);
 
-    public synchronized void addChunkExecution(final SPBMChunkExecution sPBMChunkExecution) {
-        this.chunkExecutionQueue.add(sPBMChunkExecution);
-    }
-
-    public SPBMChunkExecution getChunk() {
-        final SPBMChunkExecution chunkExecution = chunkExecutionQueue.poll();
-        if (chunkExecution == null) {
-            LOG.trace("EMPTY POLL - Chunk Queue is empty");
-        }
-        return chunkExecution;
-    }
+	public void setJdbcTemplateHolder(JdbcTemplateHolder jdbcTemplateHolder);
 }

@@ -38,8 +38,8 @@ import de.viadee.spring.batch.infrastructure.LoggingWrapper;
 import de.viadee.spring.batch.infrastructure.SBPMConfiguration;
 import de.viadee.spring.batch.operational.chronometer.ChronoHelper;
 import de.viadee.spring.batch.operational.chronometer.Chronometer;
-import de.viadee.spring.batch.persistence.SPBMItemQueue;
-import de.viadee.spring.batch.persistence.types.SPBMItem;
+import de.viadee.spring.batch.persistence.SBPMItemQueue;
+import de.viadee.spring.batch.persistence.types.SBPMItem;
 
 /**
  * This class represents a decorator Pattern of the LoggingIterator provided by
@@ -59,7 +59,7 @@ public class LoggingIterator<T> implements Iterator<T> {
 
 	private final Iterator<T> iterator;
 
-	private SPBMItemQueue sPBMItemQueue;
+	private SBPMItemQueue sPBMItemQueue;
 
 	private SBPMConfiguration sbpmConfig;
 
@@ -67,7 +67,7 @@ public class LoggingIterator<T> implements Iterator<T> {
 
 	private Chronometer iteratorChronometer = null;
 
-	public void setSPBMItemQueue(final SPBMItemQueue sPBMItemQueue) {
+	public void setSPBMItemQueue(final SBPMItemQueue sPBMItemQueue) {
 		this.sPBMItemQueue = sPBMItemQueue;
 	}
 
@@ -86,7 +86,7 @@ public class LoggingIterator<T> implements Iterator<T> {
 		if (!hasNext) {
 			iteratorChronometer.stop();
 
-			final SPBMItem sPBMItem = new SPBMItem(chronoHelper.getActiveActionID(Thread.currentThread()),
+			final SBPMItem sPBMItem = new SBPMItem(chronoHelper.getActiveActionID(Thread.currentThread()),
 					chronoHelper.getBatchChunkListener().getSPBMChunkExecution(Thread.currentThread())
 							.getChunkExecutionID(),
 					(int) iteratorChronometer.getDuration(), 0, iteratorChronometer.getObjectName(),
@@ -101,7 +101,7 @@ public class LoggingIterator<T> implements Iterator<T> {
 	public T next() {
 		if (iteratorChronometer != null) {
 			iteratorChronometer.stop();
-			final SPBMItem sPBMItem = new SPBMItem(chronoHelper.getActiveActionID(Thread.currentThread()),
+			final SBPMItem sPBMItem = new SBPMItem(chronoHelper.getActiveActionID(Thread.currentThread()),
 					chronoHelper.getBatchChunkListener().getSPBMChunkExecution(Thread.currentThread())
 							.getChunkExecutionID(),
 					(int) iteratorChronometer.getDuration(), 0, iteratorChronometer.getObjectName(),

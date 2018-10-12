@@ -47,8 +47,8 @@ import de.viadee.spring.batch.operational.chronometer.ChronoHelper;
 import de.viadee.spring.batch.operational.setupverification.AspectTestClass;
 import de.viadee.spring.batch.operational.setupverification.ContainerTest;
 import de.viadee.spring.batch.operational.setupverification.TestAspect;
-import de.viadee.spring.batch.persistence.SPBMChunkExecutionQueue;
-import de.viadee.spring.batch.persistence.SPBMItemQueue;
+import de.viadee.spring.batch.persistence.SBPMChunkExecutionQueue;
+import de.viadee.spring.batch.persistence.SBPMItemQueue;
 
 /**
  * 
@@ -66,10 +66,10 @@ import de.viadee.spring.batch.persistence.SPBMItemQueue;
 public class Configurator {
 
 	@Autowired
-	private SPBMItemQueue spbmItemQueue;
+	private SBPMItemQueue spbmItemQueue;
 
 	@Autowired
-	private SPBMChunkExecutionQueue spbmChunkExecutionQueue;
+	private SBPMChunkExecutionQueue spbmChunkExecutionQueue;
 
 	@Autowired
 	private SBPMConfiguration sbpmConfig;

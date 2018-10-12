@@ -34,12 +34,12 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import de.viadee.spring.batch.operational.chronometer.ChronoHelper;
-import de.viadee.spring.batch.persistence.SPBMChunkExecutionDAO;
-import de.viadee.spring.batch.persistence.SPBMChunkExecutionQueue;
-import de.viadee.spring.batch.persistence.SPBMItemDAO;
-import de.viadee.spring.batch.persistence.SPBMItemQueue;
-import de.viadee.spring.batch.persistence.types.SPBMChunkExecution;
-import de.viadee.spring.batch.persistence.types.SPBMItem;
+import de.viadee.spring.batch.persistence.SBPMChunkExecutionDAO;
+import de.viadee.spring.batch.persistence.SBPMChunkExecutionQueue;
+import de.viadee.spring.batch.persistence.SBPMItemDAO;
+import de.viadee.spring.batch.persistence.SBPMItemQueue;
+import de.viadee.spring.batch.persistence.types.SBPMChunkExecution;
+import de.viadee.spring.batch.persistence.types.SBPMItem;
 
 /**
  * 
@@ -74,25 +74,25 @@ class DatabaseScheduledWriter implements Runnable {
 
 	private static final Logger LOG = LoggingWrapper.getLogger(DatabaseScheduledWriter.class);
 
-	private SPBMItemQueue sPBMItemQueue;
+	private SBPMItemQueue sPBMItemQueue;
 
-	private SPBMItemDAO sPBMItemDao;
+	private SBPMItemDAO sPBMItemDao;
 
-	private SPBMChunkExecutionDAO sPBMChunkExecutionDao;
+	private SBPMChunkExecutionDAO sPBMChunkExecutionDao;
 
-	private SPBMChunkExecutionQueue sPBMChunkExecutionQueue;
+	private SBPMChunkExecutionQueue sPBMChunkExecutionQueue;
 
 	private ChronoHelper chronoHelper;
 
-	public void setSPBMItemQueue(final SPBMItemQueue sPBMItemQueue) {
+	public void setSPBMItemQueue(final SBPMItemQueue sPBMItemQueue) {
 		this.sPBMItemQueue = sPBMItemQueue;
 	}
 
-	public void setSPBMChunkExecutionQueue(final SPBMChunkExecutionQueue sPBMChunkExecutionQueue) {
+	public void setSPBMChunkExecutionQueue(final SBPMChunkExecutionQueue sPBMChunkExecutionQueue) {
 		this.sPBMChunkExecutionQueue = sPBMChunkExecutionQueue;
 	}
 
-	public void setSPBMItemDAO(SPBMItemDAO sPBMItemDao) {
+	public void setSPBMItemDAO(SBPMItemDAO sPBMItemDao) {
 		this.sPBMItemDao = sPBMItemDao;
 	}
 
@@ -105,7 +105,7 @@ class DatabaseScheduledWriter implements Runnable {
 		this.chronoHelper = chronoHelper;
 	}
 
-	public void setSPBMChunkExecutionDAO(SPBMChunkExecutionDAO sPBMChunkExecutionDao) {
+	public void setSPBMChunkExecutionDAO(SBPMChunkExecutionDAO sPBMChunkExecutionDao) {
 		this.sPBMChunkExecutionDao = sPBMChunkExecutionDao;
 	}
 
@@ -116,8 +116,8 @@ class DatabaseScheduledWriter implements Runnable {
 		}
 
 		// Empty the Item Queue
-		SPBMItem item = null;
-		final List<SPBMItem> itemList = new ArrayList<SPBMItem>();
+		SBPMItem item = null;
+		final List<SBPMItem> itemList = new ArrayList<SBPMItem>();
 		item = this.sPBMItemQueue.getItem();
 		int counter = 0;
 		while (item != null && counter <= MAXBATCHSIZE) {
@@ -129,8 +129,8 @@ class DatabaseScheduledWriter implements Runnable {
 		}
 
 		// Empty the Chunk Queue
-		SPBMChunkExecution chunkExecution = null;
-		final List<SPBMChunkExecution> chunkExecutionList = new ArrayList<SPBMChunkExecution>();
+		SBPMChunkExecution chunkExecution = null;
+		final List<SBPMChunkExecution> chunkExecutionList = new ArrayList<SBPMChunkExecution>();
 		chunkExecution = this.sPBMChunkExecutionQueue.getChunk();
 		counter = 0;
 		while (chunkExecution != null && counter < MAXBATCHSIZE) {
@@ -145,7 +145,7 @@ class DatabaseScheduledWriter implements Runnable {
 		}
 	}
 
-	public void flushItemList(final List<SPBMItem> itemList) {
+	public void flushItemList(final List<SBPMItem> itemList) {
 		LOG.debug("Flushlist with " + itemList.size() + " Items");
 		final long startFlush = System.currentTimeMillis();
 		sPBMItemDao.insertBatch(itemList);
@@ -154,7 +154,7 @@ class DatabaseScheduledWriter implements Runnable {
 		LOG.debug("Flushed");
 	}
 
-	public void flushChunkExecutionList(final List<SPBMChunkExecution> chunkExecutionList) {
+	public void flushChunkExecutionList(final List<SBPMChunkExecution> chunkExecutionList) {
 		LOG.debug("Flushing ChunkList with " + chunkExecutionList.size() + " ChunkExecutions");
 		final long startFlush = System.currentTimeMillis();
 		sPBMChunkExecutionDao.insertBatch(chunkExecutionList);

@@ -33,7 +33,7 @@ DROP VIEW "LongestActionPerChunkExecution" IF EXISTS;
 DROP VIEW "MeanItemTimeByProcessor" IF EXISTS;
 DROP VIEW "Overview" IF EXISTS;
 
-DROP TABLE "LOGS", "TestTable", "Job", "Step", "ChunkExecution", "Action", "StepAction", "Item", "logging_event", "logging_event_property", "logging_event_exception" IF EXISTS;
+DROP TABLE "LOGS", "TestTable", "Job", "Step", "ChunkExecution", "Action", "StepAction", "Item", "LOGGING_EVENT", "LOGGING_EVENT_PROPERTY", "LOGGING_EVENT_EXCEPTION" IF EXISTS;
 
 -- Create Table for the plain LOG
 CREATE TABLE "LOGS"
@@ -49,7 +49,7 @@ CREATE TABLE "TestTable"
 );
 
 -- Create Tables for Logback DbAppender
-CREATE TABLE "logging_event" (
+CREATE TABLE "LOGGING_EVENT" (
   timestmp BIGINT NOT NULL,
   formatted_message LONGVARCHAR NOT NULL,
   logger_name VARCHAR(256) NOT NULL,
@@ -67,19 +67,19 @@ CREATE TABLE "logging_event" (
   event_id IDENTITY NOT NULL);
 
 
-CREATE TABLE "logging_event_property" (
+CREATE TABLE "LOGGING_EVENT_PROPERTY" (
   event_id BIGINT NOT NULL,
   mapped_key  VARCHAR(254) NOT NULL,
   mapped_value LONGVARCHAR,
   PRIMARY KEY(event_id, mapped_key),
-  FOREIGN KEY (event_id) REFERENCES "logging_event"(event_id));
+  FOREIGN KEY (event_id) REFERENCES "LOGGING_EVENT"(event_id));
 
-CREATE TABLE "logging_event_exception" (
+CREATE TABLE "LOGGING_EVENT_EXCEPTION" (
   event_id BIGINT NOT NULL,
   i SMALLINT NOT NULL,
   trace_line VARCHAR(256) NOT NULL,
   PRIMARY KEY(event_id, i),
-  FOREIGN KEY (event_id) REFERENCES "logging_event"(event_id));
+  FOREIGN KEY (event_id) REFERENCES "LOGGING_EVENT"(event_id));
   
 -- Create Tables for persisting the logged Information
 CREATE TABLE "Job" (

@@ -28,21 +28,21 @@
  */
 package de.viadee.spring.batch.operational.monitoring;
 
-import java.time.Instant;
-
 import org.apache.log4j.Logger;
+import org.joda.time.Instant;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+
 
 import de.viadee.spring.batch.infrastructure.ActivityNotifier;
 import de.viadee.spring.batch.infrastructure.JobEndQueueCleaner;
 import de.viadee.spring.batch.infrastructure.LoggingWrapper;
 import de.viadee.spring.batch.operational.chronometer.ChronoHelper;
 import de.viadee.spring.batch.operational.chronometer.TimeLogger;
-import de.viadee.spring.batch.persistence.SPBMJobDAO;
-import de.viadee.spring.batch.persistence.types.SPBMJob;
+import de.viadee.spring.batch.persistence.SBPMJobDAO;
+import de.viadee.spring.batch.persistence.types.SBPMJob;
 
 /**
  * The BatchJobListener is created and assigned by the BeanPostProcessor class. It takes care of all the actions needed,
@@ -59,21 +59,21 @@ public class BatchJobListener implements JobExecutionListener {
 
     private ChronoHelper chronoHelper;
 
-    private SPBMJobDAO sPBMJobDAO;
+    private SBPMJobDAO sPBMJobDAO;
 
     private ActivityNotifier notificationHolder;
 
-    private SPBMJob sPBMJob;
+    private SBPMJob sPBMJob;
 
     public void setAsyncTest(final JobEndQueueCleaner asyncTest) {
         this.asyncTest = asyncTest;
     }
 
-    public SPBMJob getSPBMJob() {
+    public SBPMJob getSPBMJob() {
         return this.sPBMJob;
     }
 
-    public void setSPBMJobDAO(final SPBMJobDAO dao) {
+    public void setSPBMJobDAO(final SBPMJobDAO dao) {
         this.sPBMJobDAO = dao;
     }
 
@@ -81,7 +81,7 @@ public class BatchJobListener implements JobExecutionListener {
         this.sPBMJobDAO.insert(this.sPBMJob);
     }
 
-    public void setSPBMJob(final SPBMJob sPBMJob) {
+    public void setSPBMJob(final SBPMJob sPBMJob) {
         this.sPBMJob = sPBMJob;
 
     }
@@ -107,7 +107,7 @@ public class BatchJobListener implements JobExecutionListener {
         LOGGER.trace("BatchJobListener before advice active");
         final String jobName = jobExecution.getJobInstance().getJobName();
         setStaticBatchJobListener();
-        this.sPBMJob.setJobStart(Instant.now().toEpochMilli());
+        this.sPBMJob.setJobStart(Instant.now().getMillis());
         timeLogger.setName(jobName);
         notificationHolder.beforeJob();
         timeLogger.getOwnChronometer().startChronometer();
@@ -121,7 +121,7 @@ public class BatchJobListener implements JobExecutionListener {
         timeLogger.getOwnChronometer().stop();
         LOGGER.trace("BatchJobListener after method has stopped its chronometers");
         this.sPBMJob.setDuration((int) timeLogger.getOwnChronometer().getDuration());
-        this.sPBMJob.setJobEnd(Instant.now().toEpochMilli());
+        this.sPBMJob.setJobEnd(Instant.now().getMillis());
         this.insertDAO();
         notificationHolder.afterJob();
         try {

@@ -45,7 +45,7 @@ import de.viadee.spring.batch.infrastructure.LoggingWrapper;
 import de.viadee.spring.batch.infrastructure.SBPMConfiguration;
 import de.viadee.spring.batch.operational.chronometer.ChronoHelper;
 import de.viadee.spring.batch.operational.monitoring.writer.LoggingList;
-import de.viadee.spring.batch.persistence.SPBMItemQueue;
+import de.viadee.spring.batch.persistence.SBPMItemQueue;
 
 /**
  * This class uses SpringAOP to measure any ItemWriter on Item-Level. Since an
@@ -63,7 +63,7 @@ public class ItemWriteAspectListener {
 	private ChronoHelper chronoHelper;
 
 	@Autowired
-	private SPBMItemQueue sPBMItemQueue;
+	private SBPMItemQueue sPBMItemQueue;
 
 	@Autowired
 	private SBPMConfiguration sbpmConfig;

@@ -29,28 +29,60 @@
 package de.viadee.spring.batch.persistence.types;
 
 /**
- * This is the Database representation the interconnection between a Step and an Action. This is needed to speed up
- * analytical querys (also for the provided views), since gathering this connection from the database would need to join
- * almost all tables which is impractical when a lot of items have been measured.
+ * This is the Database representation of a ChunkExecution. Each ChunkExecution creates an own dataset inside the
+ * Database.
+ * 
+ * Example Scenario: A Step processing 40 Items having a Chunksize of 30 Items.
+ * 
+ * In this Scenario, the Monitoring-Tool will create two separate ChunkExecution Elements for the particular Step.
+ * 
+ *
  * 
  */
-public class SPBMStepAction {
+public class SBPMChunkExecution {
+
+    private final int chunkExecutionID;
 
     private final int stepID;
 
-    private final int actionID;
+    private final String stepName;
 
-    public SPBMStepAction(final int stepID, final int actionID) {
+    private final int iteration;
+
+    private int chunkTime;
+
+    public SBPMChunkExecution(final int chunkExecutionID, final int stepID, final String stepName, final int iteration,
+            final int chunkTime) {
+        super();
+        this.chunkExecutionID = chunkExecutionID;
         this.stepID = stepID;
-        this.actionID = actionID;
+        this.stepName = stepName;
+        this.iteration = iteration;
+        this.chunkTime = chunkTime;
+    }
+
+    public int getChunkExecutionID() {
+        return chunkExecutionID;
     }
 
     public int getStepID() {
         return stepID;
     }
 
-    public int getActionID() {
-        return actionID;
+    public String getStepName() {
+        return this.stepName;
+    }
+
+    public int getIteration() {
+        return iteration;
+    }
+
+    public int getChunkTime() {
+        return chunkTime;
+    }
+
+    public void setChunkTime(final int chunkTime) {
+        this.chunkTime = chunkTime;
     }
 
 }

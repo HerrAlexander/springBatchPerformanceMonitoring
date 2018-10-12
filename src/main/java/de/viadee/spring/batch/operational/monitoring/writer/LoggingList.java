@@ -38,7 +38,7 @@ import org.apache.log4j.Logger;
 import de.viadee.spring.batch.infrastructure.LoggingWrapper;
 import de.viadee.spring.batch.infrastructure.SBPMConfiguration;
 import de.viadee.spring.batch.operational.chronometer.ChronoHelper;
-import de.viadee.spring.batch.persistence.SPBMItemQueue;
+import de.viadee.spring.batch.persistence.SBPMItemQueue;
 
 /**
  * This class is used to generate a LoggingList which behaves like a common
@@ -56,7 +56,7 @@ public class LoggingList<T> implements List<T> {
 
 	ChronoHelper chronoHelper;
 
-	private SPBMItemQueue sPBMItemQueue;
+	private SBPMItemQueue sPBMItemQueue;
 
 	private final List<T> list;
 
@@ -70,7 +70,7 @@ public class LoggingList<T> implements List<T> {
 		this.hashCode = hashCode;
 	}
 
-	public void setSPBMItemQueue(final SPBMItemQueue sPBMItemQueue) {
+	public void setSPBMItemQueue(final SBPMItemQueue sPBMItemQueue) {
 		this.sPBMItemQueue = sPBMItemQueue;
 	}
 

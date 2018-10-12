@@ -26,55 +26,37 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package de.viadee.spring.batch.persistence.types;
+package de.viadee.spring.batch.persistence;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import de.viadee.spring.batch.infrastructure.JdbcTemplateHolder;
+import de.viadee.spring.batch.persistence.types.SBPMAction;
 
 /**
- * This is the Database representation of an action. An action is defined as either a reader, (Composite-)ItemProcessor
- * or an (Composite-) ItemWriter. The different types are distinguished by the "actionType" attribute, whereas a one
- * stands for an ItemReader, a two for an (Composite-) ItemProcessor and a three for an (Composite-) ItemWriter.
+ * DAO for the action object. See SpbmAction class for further details.
  * 
- * This is an immutable class.
  */
-public class SPBMAction {
+@Repository
+public class SBPMActionDAOImpl implements SBPMActionDAO {
 
-    private final int actionID;
+    @Autowired
+    private JdbcTemplateHolder jdbcTemplateHolder;
 
-    private final String actionName;
+    private final String INSERTSQL = "INSERT INTO \"Action\" (\"ActionID\",\"ActionName\",\"ActionType\",\"ActionFather\",\"ActionTime\") VALUES (:actionID,:actionName,:actionType,:actionFather,:actionTime);";
 
-    private final int actionType;
-
-    private final int actionFather;
-
-    private final int actionTime;
-
-    public SPBMAction(final int actionID, final String actionName, final int actionType, final int actionFather,
-            final int actionTime) {
-        super();
-        this.actionID = actionID;
-        this.actionName = actionName;
-        this.actionType = actionType;
-        this.actionFather = actionFather;
-        this.actionTime = actionTime;
+    @Override
+    public void insert(final SBPMAction sPBMAction) {
+        final Map<String, String> params = new HashMap<String, String>();
+        params.put("actionID", "" + sPBMAction.getActionID());
+        params.put("actionName", sPBMAction.getActionName());
+        params.put("actionType", "" + sPBMAction.getActionType());
+        params.put("actionFather", "" + sPBMAction.getActionFather());
+        params.put("actionTime", "" + sPBMAction.getActionTime());
+        jdbcTemplateHolder.getJdbcTemplate().update(INSERTSQL, params);
     }
-
-    public int getActionID() {
-        return actionID;
-    }
-
-    public String getActionName() {
-        return actionName;
-    }
-
-    public int getActionType() {
-        return actionType;
-    }
-
-    public int getActionFather() {
-        return actionFather;
-    }
-
-    public int getActionTime() {
-        return actionTime;
-    }
-
 }
