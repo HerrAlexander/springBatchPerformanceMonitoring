@@ -28,21 +28,34 @@
  */
 package de.viadee.spring.batch.persistence;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import de.viadee.spring.batch.infrastructure.JdbcTemplateHolder;
-import de.viadee.spring.batch.persistence.types.SPBMChunkExecution;
+import de.viadee.spring.batch.persistence.types.SBPMStepAction;
 
 /**
- * DAO Interface for the ChunkExecution Object. See SpbmChunkExecution Class for further Details.
+ * DAO Object for the StepAction Object. See SpbmStepAction Class for further Details.
  * 
+ *
  */
-public interface SPBMChunkExecutionDAO {
+@Repository
+public class SBPMStepActionDAOImpl implements SBPMStepActionDAO {
 
-    public void insert(SPBMChunkExecution sPBMChunkExecution);
+    @Autowired
+    private JdbcTemplateHolder jdbcTemplateHolder;
 
-    public void insertBatch(List<SPBMChunkExecution> chunkExecutionList);
-    
-    public void setJdbcTemplateHolder(JdbcTemplateHolder jdbcTemplateHolder);
-    
+    private final String INSERTSQL = "INSERT INTO \"StepAction\" (\"StepID\", \"ActionID\") VALUES (:stepID,:actionID);";
+
+    @Override
+    public void insert(final SBPMStepAction sPBMStepAction) {
+        final Map<String, String> params = new HashMap<String, String>();
+        params.put("stepID", "" + sPBMStepAction.getStepID());
+        params.put("actionID", "" + sPBMStepAction.getActionID());
+        jdbcTemplateHolder.getJdbcTemplate().update(INSERTSQL, params);
+    }
+
 }

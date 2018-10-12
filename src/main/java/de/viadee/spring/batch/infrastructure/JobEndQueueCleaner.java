@@ -32,10 +32,10 @@ import org.apache.log4j.Logger;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 
-import de.viadee.spring.batch.persistence.SPBMChunkExecutionDAOImpl;
-import de.viadee.spring.batch.persistence.SPBMChunkExecutionQueue;
-import de.viadee.spring.batch.persistence.SPBMItemDAOImpl;
-import de.viadee.spring.batch.persistence.SPBMItemQueue;
+import de.viadee.spring.batch.persistence.SBPMChunkExecutionDAOImpl;
+import de.viadee.spring.batch.persistence.SBPMChunkExecutionQueue;
+import de.viadee.spring.batch.persistence.SBPMItemDAOImpl;
+import de.viadee.spring.batch.persistence.SBPMItemQueue;
 
 /**
  * TODO: Check if we even need this Doesn't seem like it at this time
@@ -48,11 +48,11 @@ public class JobEndQueueCleaner {
 
 	private static final Logger LOG = LoggingWrapper.getLogger(JobEndQueueCleaner.class);
 
-	public JobEndQueueCleaner(final SPBMItemQueue sPBMItemQueue, final SPBMChunkExecutionQueue sPBMChunkExecutionQueue,
+	public JobEndQueueCleaner(final SBPMItemQueue sPBMItemQueue, final SBPMChunkExecutionQueue sPBMChunkExecutionQueue,
 			final JdbcTemplateHolder templateHolder) {
 		this.dbScheduledWriter = new DatabaseScheduledWriter();
-		dbScheduledWriter.setSPBMItemDAO(new SPBMItemDAOImpl());
-		dbScheduledWriter.setSPBMChunkExecutionDAO(new SPBMChunkExecutionDAOImpl());
+		dbScheduledWriter.setSPBMItemDAO(new SBPMItemDAOImpl());
+		dbScheduledWriter.setSPBMChunkExecutionDAO(new SBPMChunkExecutionDAOImpl());
 		dbScheduledWriter.setJdbcTemplateHolder(templateHolder);
 		dbScheduledWriter.setSPBMItemQueue(sPBMItemQueue);
 		dbScheduledWriter.setSPBMChunkExecutionQueue(sPBMChunkExecutionQueue);

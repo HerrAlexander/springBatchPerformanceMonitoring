@@ -33,14 +33,14 @@ import java.util.List;
 import java.util.Map;
 
 import de.viadee.spring.batch.infrastructure.JdbcTemplateHolder;
-import de.viadee.spring.batch.persistence.types.SPBMItem;
+import de.viadee.spring.batch.persistence.types.SBPMItem;
 
 /**
  * DAO for the item object. See SpbmItem class for further details.
  * 
  */
 //@Repository
-public class SPBMItemDAOImpl implements SPBMItemDAO {
+public class SBPMItemDAOImpl implements SBPMItemDAO {
 
     
     private JdbcTemplateHolder jdbcTemplateHolder;
@@ -48,24 +48,24 @@ public class SPBMItemDAOImpl implements SPBMItemDAO {
     private final String ITEMINSERTSQL = "INSERT INTO \"Item\" (\"ActionID\",\"ChunkExecutionID\",\"ItemName\", \"ItemClassName\", \"ItemReflection\", \"TimeInMS\",\"Timestamp\", \"Error\") VALUES (:actionID,:chunkExecutionID,:itemName,:className,:itemJson,:timeInMS,:timestamp,:error);";
     
     @Override
-    public void insert(final SPBMItem sPBMItem) { 
+    public void insert(final SBPMItem sPBMItem) { 
         final Map<String, String> params = getParams(sPBMItem);
         jdbcTemplateHolder.getJdbcTemplate().update(ITEMINSERTSQL, params);   
     }
 
     @Override
-    public void insertBatch(final List<SPBMItem> itemList) {
+    public void insertBatch(final List<SBPMItem> itemList) {
         final Map<String, String>[] parameters = new Map[itemList.size()];
         Map<String, String> params;
         int counter = 0;
-        for (final SPBMItem sPBMItem : itemList) {
+        for (final SBPMItem sPBMItem : itemList) {
         	params = getParams(sPBMItem);
             parameters[counter++] = params;
         }
         this.jdbcTemplateHolder.getJdbcTemplate().batchUpdate(ITEMINSERTSQL, parameters);
     }
     
-    private Map<String, String> getParams(final SPBMItem sPBMItem) {
+    private Map<String, String> getParams(final SBPMItem sPBMItem) {
     	final Map<String, String> params = new HashMap<String, String>();
     	params.put("actionID", "" + sPBMItem.getActionID());
         params.put("chunkExecutionID", "" + sPBMItem.getChunkExecutionID());

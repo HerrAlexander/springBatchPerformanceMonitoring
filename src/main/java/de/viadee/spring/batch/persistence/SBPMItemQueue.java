@@ -26,69 +26,43 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package de.viadee.spring.batch.persistence.types;
+package de.viadee.spring.batch.persistence;
+
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Component;
+
+import de.viadee.spring.batch.infrastructure.LoggingWrapper;
+import de.viadee.spring.batch.persistence.types.SBPMItem;
 
 /**
- * This is the Database representation of a Step.
+ * This class holds a ThreadSafe Queue containing item objects that shall be stored in the Database.
  * 
- *
+ * Whenever an SpbmItem object needs to be persisted, it is pushed into this list.
+ * 
+ * The DatabaseScheduledWriter takes care of emptying this list and persisting the entrys in the database.
+ * 
+ * See DatabaseScheduledWriter class for further Details.
+ * 
  */
-public class SPBMStep {
+@Component
+public class SBPMItemQueue {
 
-	private final int stepID;
+    private final Queue<SBPMItem> itemQueue = new ConcurrentLinkedQueue<SBPMItem>();
 
-	private final int jobID;
+    private static final Logger LOG = LoggingWrapper.getLogger(SBPMItemQueue.class);
 
-	private final String stepName;
+    public void addItem(final SBPMItem sPBMItem) {
+        this.itemQueue.add(sPBMItem);
+    }
 
-	private int stepTime;
-
-	private long stepStart;
-
-	private long stepEnd;
-
-	public SPBMStep(final int stepID, final int jobID, final String stepName, final int stepTime) {
-		super();
-		this.stepID = stepID;
-		this.jobID = jobID;
-		this.stepName = stepName;
-		this.stepTime = stepTime;
-	}
-
-	public int getStepID() {
-		return stepID;
-	}
-
-	public int getJobID() {
-		return jobID;
-	}
-
-	public String getStepName() {
-		return stepName;
-	}
-
-	public int getStepTime() {
-		return stepTime;
-	}
-
-	public void setStepTime(final int stepTime) {
-		this.stepTime = stepTime;
-	}
-
-	public long getStepStart() {
-		return stepStart;
-	}
-
-	public void setStepStart(long stepStart) {
-		this.stepStart = stepStart;
-	}
-
-	public long getStepEnd() {
-		return stepEnd;
-	}
-
-	public void setStepEnd(long stepEnd) {
-		this.stepEnd = stepEnd;
-	}
-
+    public SBPMItem getItem() {
+        final SBPMItem item = itemQueue.poll();
+        if (item == null) {
+            LOG.trace("EMPTY POLL - Item Queue is empty");
+        }
+        return item;
+    }
 }

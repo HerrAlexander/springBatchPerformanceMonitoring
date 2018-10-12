@@ -26,59 +26,15 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package de.viadee.spring.batch.persistence.types;
+package de.viadee.spring.batch.persistence;
+
+import de.viadee.spring.batch.persistence.types.SBPMAction;
 
 /**
- * This is the database representation of a Job.
- * 
+ * DAO Interface for the Action Object. See SpbmAction Class for further Details.
+ *
  */
-public class SPBMJob {
+public interface SBPMActionDAO {
 
-	private final int jobID;
-
-	private final String jobName;
-
-	private int duration;
-
-	private long jobStart;
-
-	private long jobEnd;
-
-	public SPBMJob(final int jobID, final String jobName, final int Duration) {
-		this.jobID = jobID;
-		this.jobName = jobName;
-	}
-
-	public int getJobID() {
-		return this.jobID;
-	}
-
-	public String getJobName() {
-		return this.jobName;
-	}
-
-	public void setDuration(final int duration) {
-		this.duration = duration;
-	}
-
-	public int getDuration() {
-		return this.duration;
-	}
-
-	public long getJobStart() {
-		return jobStart;
-	}
-
-	public void setJobStart(long jobStart) {
-		this.jobStart = jobStart;
-	}
-
-	public long getJobEnd() {
-		return jobEnd;
-	}
-
-	public void setJobEnd(long jobEnd) {
-		this.jobEnd = jobEnd;
-	}
-
+    public void insert(SBPMAction sPBMAction);
 }

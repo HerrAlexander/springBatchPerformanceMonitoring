@@ -28,16 +28,21 @@
  */
 package de.viadee.spring.batch.persistence;
 
-import de.viadee.spring.batch.persistence.types.SPBMJob;
+import java.util.List;
+
+import de.viadee.spring.batch.infrastructure.JdbcTemplateHolder;
+import de.viadee.spring.batch.persistence.types.SBPMChunkExecution;
 
 /**
- * DAO Interface for the Job Object. See SpbmJobClass for further Details.
- * 
+ * DAO Interface for the ChunkExecution Object. See SpbmChunkExecution Class for further Details.
  * 
  */
-public interface SPBMJobDAO {
+public interface SBPMChunkExecutionDAO {
 
-    public void insert(SPBMJob job);
+    public void insert(SBPMChunkExecution sPBMChunkExecution);
 
-    public void insertMeta(SPBMJob job);
+    public void insertBatch(List<SBPMChunkExecution> chunkExecutionList);
+    
+    public void setJdbcTemplateHolder(JdbcTemplateHolder jdbcTemplateHolder);
+    
 }

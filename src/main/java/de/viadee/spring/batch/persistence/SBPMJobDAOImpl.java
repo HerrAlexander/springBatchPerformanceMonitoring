@@ -36,7 +36,7 @@ import org.springframework.stereotype.Repository;
 
 import de.viadee.spring.batch.infrastructure.JdbcTemplateHolder;
 import de.viadee.spring.batch.infrastructure.SBPMConfiguration;
-import de.viadee.spring.batch.persistence.types.SPBMJob;
+import de.viadee.spring.batch.persistence.types.SBPMJob;
 
 /**
  * DAO Object for the Job Object. See SpbmJob Class for further Details.
@@ -44,7 +44,7 @@ import de.viadee.spring.batch.persistence.types.SPBMJob;
  * 
  */
 @Repository
-public class SPBMJobDAOImpl implements SPBMJobDAO {
+public class SBPMJobDAOImpl implements SBPMJobDAO {
 
 	@Autowired
 	private JdbcTemplateHolder jdbcTemplateHolder;
@@ -57,7 +57,7 @@ public class SPBMJobDAOImpl implements SPBMJobDAO {
 	private final String INSERTMETASQL = "INSERT INTO \"BatchRuns\"(\"JobID\", \"StepID\", \"ActionType\", \"JobName\", \"StepName\", \"StepStart\", \"StepEnd\", \"ActionName\",  \"TotalTime\", \"ProcessedItems\", \"MeanTimePerItem\") SELECT  \"OV\".*,  (\"OV\".\"Total\"/ \"OV\".\"ProcessedItems\") AS \"MeanTimePerItem\" FROM \"Overview\" AS \"OV\" WHERE \"OV\".\"JobID\" = :jobID;";
 
 	@Override
-	public void insert(final SPBMJob job) {
+	public void insert(final SBPMJob job) {
 		final Map<String, String> params = new HashMap<String, String>();
 		params.put("jobID", "" + job.getJobID());
 		params.put("jobName", job.getJobName());
@@ -71,7 +71,7 @@ public class SPBMJobDAOImpl implements SPBMJobDAO {
 	}
 
 	@Override
-	public void insertMeta(final SPBMJob job) {
+	public void insertMeta(final SBPMJob job) {
 		final Map<String, String> params = new HashMap<String, String>();
 		params.put("jobID", "" + job.getJobID());
 		jdbcTemplateHolder.getJdbcTemplate().update(INSERTMETASQL, params);

@@ -28,13 +28,15 @@
  */
 package de.viadee.spring.batch.persistence;
 
-import de.viadee.spring.batch.persistence.types.SPBMAction;
+import de.viadee.spring.batch.persistence.types.SBPMStep;
 
 /**
- * DAO Interface for the Action Object. See SpbmAction Class for further Details.
+ * DAO Interface for the Step Object. See SpbmStep Class for further Details.
+ * 
  *
  */
-public interface SPBMActionDAO {
+public interface SBPMStepDAO {
 
-    public void insert(SPBMAction sPBMAction);
+    public void insert(SBPMStep sPBMStep);
+
 }

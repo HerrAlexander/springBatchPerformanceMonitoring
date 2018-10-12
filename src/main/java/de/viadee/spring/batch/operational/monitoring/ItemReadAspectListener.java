@@ -44,8 +44,8 @@ import de.viadee.spring.batch.infrastructure.LoggingWrapper;
 import de.viadee.spring.batch.infrastructure.SBPMConfiguration;
 import de.viadee.spring.batch.operational.chronometer.ChronoHelper;
 import de.viadee.spring.batch.operational.chronometer.Chronometer;
-import de.viadee.spring.batch.persistence.SPBMItemQueue;
-import de.viadee.spring.batch.persistence.types.SPBMItem;
+import de.viadee.spring.batch.persistence.SBPMItemQueue;
+import de.viadee.spring.batch.persistence.types.SBPMItem;
 
 /**
  * This class uses SpringAOP to measure any ItemReader on Item-Level.
@@ -59,7 +59,7 @@ public class ItemReadAspectListener {
 	ChronoHelper chronoHelper;
 
 	@Autowired
-	SPBMItemQueue sPBMItemQueue;
+	SBPMItemQueue sPBMItemQueue;
 
 	@Autowired
 	private SBPMConfiguration sbpmConfig;
@@ -95,7 +95,7 @@ public class ItemReadAspectListener {
 						ToStringStyle.JSON_STYLE);
 				itemReflection = reflectionToStringBuilder.toString();
 			}
-			final SPBMItem sPBMItem = new SPBMItem(chronoHelper.getActiveActionID(Thread.currentThread()),
+			final SBPMItem sPBMItem = new SBPMItem(chronoHelper.getActiveActionID(Thread.currentThread()),
 					chronoHelper.getBatchChunkListener().getSPBMChunkExecution(Thread.currentThread())
 							.getChunkExecutionID(),
 					(int) itemChronometer.getDuration(), 0, readItem.toString(), itemReflection, itemClassName);

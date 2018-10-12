@@ -26,63 +26,43 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package de.viadee.spring.batch.persistence.types;
+package de.viadee.spring.batch.persistence;
+
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Component;
+
+import de.viadee.spring.batch.infrastructure.LoggingWrapper;
+import de.viadee.spring.batch.persistence.types.SBPMChunkExecution;
 
 /**
- * This is the Database representation of a ChunkExecution. Each ChunkExecution creates an own dataset inside the
- * Database.
+ * This class holds a ThreadSafe Queue containing ChunkExecution Objects that shall be stored in the Database.
  * 
- * Example Scenario: A Step processing 40 Items having a Chunksize of 30 Items.
+ * Whenever a SpbmChunkExecution Object shall be persisted into the Database, it is pushed into this List.
  * 
- * In this Scenario, the Monitoring-Tool will create two separate ChunkExecution Elements for the particular Step.
+ * The DatabaseScheduledWriter takes care of emptying this list and persisting the Entrys into the Database.
  * 
- *
+ * See DatabaseScheduledWriter class for further Details.
  * 
  */
-public class SPBMChunkExecution {
+@Component
+public class SBPMChunkExecutionQueue {
 
-    private final int chunkExecutionID;
+    private final Queue<SBPMChunkExecution> chunkExecutionQueue = new ConcurrentLinkedQueue<SBPMChunkExecution>();
 
-    private final int stepID;
+    private static final Logger LOG = LoggingWrapper.getLogger(SBPMChunkExecutionQueue.class);
 
-    private final String stepName;
-
-    private final int iteration;
-
-    private int chunkTime;
-
-    public SPBMChunkExecution(final int chunkExecutionID, final int stepID, final String stepName, final int iteration,
-            final int chunkTime) {
-        super();
-        this.chunkExecutionID = chunkExecutionID;
-        this.stepID = stepID;
-        this.stepName = stepName;
-        this.iteration = iteration;
-        this.chunkTime = chunkTime;
+    public synchronized void addChunkExecution(final SBPMChunkExecution sPBMChunkExecution) {
+        this.chunkExecutionQueue.add(sPBMChunkExecution);
     }
 
-    public int getChunkExecutionID() {
-        return chunkExecutionID;
+    public SBPMChunkExecution getChunk() {
+        final SBPMChunkExecution chunkExecution = chunkExecutionQueue.poll();
+        if (chunkExecution == null) {
+            LOG.trace("EMPTY POLL - Chunk Queue is empty");
+        }
+        return chunkExecution;
     }
-
-    public int getStepID() {
-        return stepID;
-    }
-
-    public String getStepName() {
-        return this.stepName;
-    }
-
-    public int getIteration() {
-        return iteration;
-    }
-
-    public int getChunkTime() {
-        return chunkTime;
-    }
-
-    public void setChunkTime(final int chunkTime) {
-        this.chunkTime = chunkTime;
-    }
-
 }
